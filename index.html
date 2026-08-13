@@ -145,26 +145,21 @@
   </div>
 
   <header class="bg-slate-900 text-slate-100 shadow-md sticky top-0 z-30 border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2 flex items-center justify-between gap-2">
       
-      <!-- Left: DB Status Indicator, Countdown Button & Icon-only Fullscreen Button -->
+      <!-- Left: DB Status Indicator & Icon-only Fullscreen Button -->
       <div class="flex items-center gap-2">
         <div class="flex items-center gap-2 bg-slate-800/90 px-2.5 py-1 rounded-full text-xs font-medium border border-slate-700">
           <span id="db-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
           <span id="db-status-text" class="text-slate-300 text-[11px] sm:text-xs">Connecting...</span>
         </div>
 
-        <button onclick="openWelcomeScreen()" title="Trip Info & Countdown" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
-          <i class="fa-solid fa-clock text-amber-400"></i>
-          <span class="hidden md:inline">Countdown</span>
-        </button>
-
         <button onclick="toggleFullscreen()" id="btn-fullscreen" title="Toggle Fullscreen" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 hover:text-amber-300 w-7 h-7 rounded-full text-xs font-semibold flex items-center justify-center transition shrink-0 cursor-pointer">
           <i id="fullscreen-icon" class="fa-solid fa-expand"></i>
         </button>
       </div>
 
-      <!-- Right: Senior Font Sizer, Version Badge, Export Buttons, Admin Lock -->
+      <!-- Right: Senior Font Sizer, Version Badge, Admin Lock & Export Buttons Stacked Below -->
       <div class="flex items-center gap-1.5 sm:gap-2">
         <!-- Senior Friendly Font Sizer -->
         <div class="bg-slate-800 border border-slate-700 rounded-lg p-0.5 flex items-center text-xs font-bold text-slate-300">
@@ -174,25 +169,29 @@
 
         <!-- Application Auto-Incremented Version Badge -->
         <span class="bg-slate-800/90 border border-slate-700 text-amber-400 text-[10px] sm:text-xs font-mono font-bold px-2 py-1 rounded-lg shadow-2xs" title="Application Version">
-          v1.0.9
+          v1.1.0
         </span>
 
-        <!-- Export Buttons -->
-        <button onclick="exportPDF()" title="Download PDF Report" class="admin-only hidden bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
-          <i class="fa-solid fa-file-pdf text-rose-400"></i>
-          <span class="hidden sm:inline">PDF</span>
-        </button>
-        
-        <button onclick="exportCSV()" title="Export CSV Data" class="admin-only hidden bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
-          <i class="fa-solid fa-file-excel text-emerald-400"></i>
-          <span class="hidden sm:inline">CSV</span>
-        </button>
+        <!-- Admin Lock & Export Container (Stacked below in Admin Mode) -->
+        <div class="flex flex-col items-end gap-1">
+          <button id="admin-toggle-btn" onclick="openAdminModal()" title="Admin PIN Unlock" class="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition cursor-pointer">
+            <i id="admin-lock-icon" class="fa-solid fa-key text-amber-400"></i>
+            <span id="admin-status-text" class="hidden text-[11px] font-mono"></span>
+          </button>
 
-        <!-- Admin Lock Button -->
-        <button id="admin-toggle-btn" onclick="openAdminModal()" title="Admin PIN Unlock" class="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition cursor-pointer">
-          <i id="admin-lock-icon" class="fa-solid fa-key text-amber-400"></i>
-          <span id="admin-status-text" class="hidden text-[11px] font-mono"></span>
-        </button>
+          <!-- Export Buttons (Admin only, shown below Admin badge) -->
+          <div class="admin-only hidden flex items-center gap-1">
+            <button onclick="exportPDF()" title="Download PDF Report" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
+              <i class="fa-solid fa-file-pdf text-rose-400"></i>
+              <span>PDF</span>
+            </button>
+            
+            <button onclick="exportCSV()" title="Export CSV Data" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
+              <i class="fa-solid fa-file-excel text-emerald-400"></i>
+              <span>CSV</span>
+            </button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -701,7 +700,7 @@
     </div>
   </div>
 
-  <!-- MODAL: SECURITY ADMIN PIN UNLOCK (Configured for numeric-only phone keypad) -->
+  <!-- MODAL: SECURITY ADMIN PIN UNLOCK (Configured for numeric-only keypad & auto-unlock on 4th character) -->
   <div id="modal-admin-pin" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 z-50 hidden">
     <div class="bg-white w-full max-w-xs rounded-2xl shadow-xl border border-slate-200 p-5 text-center space-y-4">
       <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto text-amber-600 text-xl">
@@ -710,11 +709,11 @@
 
       <div>
         <h3 class="font-extrabold font-heading text-base text-slate-900">Security PIN Unlock</h3>
-        <p class="text-xs text-slate-500">Enter Admin PIN (6677) or Super Admin PIN (6789) to unlock management access.</p>
+        <p class="text-xs text-slate-500">Enter Admin PIN or Super Admin PIN to unlock management access.</p>
       </div>
 
       <div class="space-y-2">
-        <input type="password" id="admin-pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" class="w-32 text-center text-2xl font-mono tracking-widest px-3 py-2 border-2 border-slate-300 focus:border-amber-500 rounded-xl outline-none mx-auto block">
+        <input type="password" id="admin-pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" oninput="handlePinInput(this)" class="w-32 text-center text-2xl font-mono tracking-widest px-3 py-2 border-2 border-slate-300 focus:border-amber-500 rounded-xl outline-none mx-auto block">
         <p id="admin-pin-error" class="text-xs text-rose-600 font-bold hidden"><i class="fa-solid fa-circle-exclamation"></i> Incorrect PIN!</p>
       </div>
 
@@ -1025,6 +1024,13 @@
         dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse";
         text.innerText = "Connecting...";
         text.className = "text-amber-300 text-[11px] sm:text-xs font-medium";
+      }
+
+      // Hide text in Admin mode to show only colored dot
+      if (window.isAdminMode) {
+        text.classList.add('hidden');
+      } else {
+        text.classList.remove('hidden');
       }
     };
 
@@ -1537,7 +1543,6 @@
           tr.classList.add('bg-amber-100', 'ring-2', 'ring-amber-500', 'shadow-lg', 'scale-[1.01]', 'z-30');
           showDragNotice(true);
           
-          // Lock container and page scrolling so touch dragging moves the row instead of scrolling
           if (container) container.style.overflowY = 'hidden';
           document.body.style.touchAction = 'none';
           document.body.style.overflow = 'hidden';
@@ -1554,8 +1559,7 @@
         const dist = Math.hypot(moveX - startX, moveY - startY);
 
         if (!isDraggingRow) {
-          // Jitter tolerance threshold before canceling timer
-          if (dist > 20) {
+          if (dist > 25) {
             if (pressTimer) clearTimeout(pressTimer);
             pressTimer = null;
             dragSourceId = null;
@@ -1653,7 +1657,6 @@
       const [draggedItem] = list.splice(sourceIdx, 1);
       list.splice(targetIdx, 0, draggedItem);
 
-      // Dynamically assign sequential order indices
       list.forEach((item, idx) => {
         item.order = idx;
       });
@@ -2109,55 +2112,76 @@
         switchView('directory');
         return;
       }
-      document.getElementById('admin-pin-input').value = "";
+      const pinInput = document.getElementById('admin-pin-input');
+      if (pinInput) pinInput.value = "";
       document.getElementById('admin-pin-error').classList.add('hidden');
       document.getElementById('modal-admin-pin').classList.remove('hidden');
-      setTimeout(() => document.getElementById('admin-pin-input').focus(), 100);
+      if (pinInput) setTimeout(() => pinInput.focus(), 100);
     };
 
     window.closeAdminModal = function() {
       document.getElementById('modal-admin-pin').classList.add('hidden');
     };
 
-    window.submitAdminPin = function() {
-      const pin = document.getElementById('admin-pin-input').value.trim();
+    window.handlePinInput = function(inputEl) {
+      const val = inputEl.value.trim();
       const errEl = document.getElementById('admin-pin-error');
-      
-      if (pin === '6677') {
-        window.userRole = 'admin';
-        window.isAdminMode = true;
-        window.isSuperAdmin = false;
-        closeAdminModal();
-        updateAdminVisibility();
-      } else if (pin === '6789') {
-        window.userRole = 'superadmin';
-        window.isAdminMode = true;
-        window.isSuperAdmin = true;
-        closeAdminModal();
-        updateAdminVisibility();
-      } else {
-        errEl.innerText = "Incorrect PIN!";
-        errEl.classList.remove('hidden');
+
+      if (val.length < 4) {
+        if (errEl) errEl.classList.add('hidden');
+        return;
       }
+
+      if (val.length === 4) {
+        if (val === '6677') {
+          window.userRole = 'admin';
+          window.isAdminMode = true;
+          window.isSuperAdmin = false;
+          inputEl.blur(); // Dismisses mobile keyboard automatically
+          closeAdminModal();
+          updateAdminVisibility();
+        } else if (val === '6789') {
+          window.userRole = 'superadmin';
+          window.isAdminMode = true;
+          window.isSuperAdmin = true;
+          inputEl.blur(); // Dismisses mobile keyboard automatically
+          closeAdminModal();
+          updateAdminVisibility();
+        } else {
+          if (errEl) {
+            errEl.innerText = "Incorrect PIN!";
+            errEl.classList.remove('hidden');
+          }
+        }
+      }
+    };
+
+    window.submitAdminPin = function() {
+      const pinInput = document.getElementById('admin-pin-input');
+      if (pinInput) window.handlePinInput(pinInput);
     };
 
     function updateAdminVisibility() {
       const btnText = document.getElementById('admin-status-text');
       const lockIcon = document.getElementById('admin-lock-icon');
+      const dbText = document.getElementById('db-status-text');
       
       if (window.isSuperAdmin) {
         if (btnText) { btnText.innerText = "SUPER ADMIN"; btnText.classList.remove('hidden'); }
         if (lockIcon) lockIcon.className = "fa-solid fa-crown text-amber-400";
+        if (dbText) dbText.classList.add('hidden');
         document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
         document.querySelectorAll('.superadmin-only').forEach(el => el.classList.remove('hidden'));
       } else if (window.isAdminMode) {
         if (btnText) { btnText.innerText = "ADMIN"; btnText.classList.remove('hidden'); }
         if (lockIcon) lockIcon.className = "fa-solid fa-unlock text-emerald-400";
+        if (dbText) dbText.classList.add('hidden');
         document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
         document.querySelectorAll('.superadmin-only').forEach(el => el.classList.add('hidden'));
       } else {
         if (btnText) { btnText.innerText = ""; btnText.classList.add('hidden'); }
         if (lockIcon) lockIcon.className = "fa-solid fa-key text-amber-400";
+        if (dbText) dbText.classList.remove('hidden');
         document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
         document.querySelectorAll('.superadmin-only').forEach(el => el.classList.add('hidden'));
       }
