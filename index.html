@@ -190,7 +190,7 @@
 
         <!-- Application Auto-Incremented Version Badge -->
         <span class="bg-slate-800/90 border border-slate-700 text-amber-400 text-[10px] sm:text-xs font-mono font-bold px-2 py-1 rounded-lg shadow-2xs" title="Application Version">
-          v1.1.8
+          v1.1.9
         </span>
 
         <!-- Admin Lock & Export Buttons (Horizontally Adjacent) -->
@@ -206,13 +206,18 @@
             </button>
           </div>
 
-          <button id="admin-toggle-btn" onclick="openAdminModal()" title="Admin PIN Unlock" class="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 px-2.5 py-1 h-7 rounded-lg text-xs font-bold flex items-center gap-1 transition cursor-pointer">
+          <button id="admin-toggle-btn" onclick="toggleAdminLock()" title="Admin PIN Unlock" class="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 px-2.5 py-1 h-7 rounded-lg text-xs font-bold flex items-center gap-1 transition cursor-pointer">
             <i id="admin-lock-icon" class="fa-solid fa-key text-amber-400"></i>
             <span id="admin-status-text" class="hidden text-[11px] font-mono"></span>
           </button>
         </div>
       </div>
 
+    </div>
+
+    <!-- Developer Credit Right Below Admin Button Area -->
+    <div class="text-right text-[10px] sm:text-[11px] text-amber-300/80 font-medium pt-1 tracking-wide">
+      Page developer: Rajapriyan Rajendran
     </div>
   </header>
 
@@ -462,7 +467,7 @@
     <div id="view-rooms" class="hidden space-y-4">
       <div class="bg-white p-3 sm:p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
         
-        <!-- Header & Search/Filters -->
+        <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div>
             <h2 class="text-base sm:text-lg font-extrabold font-heading text-slate-900 flex items-center gap-2">
@@ -470,30 +475,35 @@
             </h2>
             <p class="text-xs text-slate-500">Visual distribution of rooms classified and grouped by Hotel property and Floor level.</p>
           </div>
-
-          <!-- Interactive Mobile Room Filters -->
-          <div class="no-print flex flex-wrap items-center gap-2">
-            <div class="relative flex-1 min-w-[130px]">
-              <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-              <input type="text" id="room-grid-search" oninput="renderRoomGrid()" placeholder="Search room or occupant..." class="w-full pl-7 pr-2.5 py-1 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-1 focus:ring-purple-600 focus:bg-white outline-none transition">
-            </div>
-
-            <select id="room-grid-filter-hotel" onchange="renderRoomGrid()" class="px-2 py-1 bg-slate-50 border border-slate-300 rounded-lg text-[11px] font-bold text-slate-700 outline-none h-7 cursor-pointer">
-              <option value="all">Hotel: All</option>
-            </select>
-
-            <select id="room-grid-filter-status" onchange="renderRoomGrid()" class="px-2 py-1 bg-slate-50 border border-slate-300 rounded-lg text-[11px] font-bold text-slate-700 outline-none h-7 cursor-pointer">
-              <option value="all">Status: All</option>
-              <option value="occupied">Occupied</option>
-              <option value="vacant">Vacant</option>
-              <option value="overcapacity">Overcapacity</option>
-            </select>
-          </div>
         </div>
 
-        <!-- Occupancy Bar KPI Summary -->
-        <div id="room-grid-kpi" class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+        <!-- Occupancy Bar KPI Summary (Horizontally Aligned Side-by-Side) -->
+        <div id="room-grid-kpi" class="grid grid-cols-3 gap-1.5 sm:gap-2 text-xs">
           <!-- Dynamically populated via JS -->
+        </div>
+
+        <!-- Unassigned Families Container (BEFORE Search & Filters) -->
+        <div id="room-unassigned-container">
+          <!-- Dynamically populated via JS -->
+        </div>
+
+        <!-- Interactive Mobile Room Search & Filters (AFTER Unassigned Families) -->
+        <div class="no-print flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
+          <div class="relative flex-1 min-w-[130px]">
+            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="room-grid-search" oninput="renderRoomGrid()" placeholder="Search room or occupant..." class="w-full pl-7 pr-2.5 py-1 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-1 focus:ring-purple-600 focus:bg-white outline-none transition">
+          </div>
+
+          <select id="room-grid-filter-hotel" onchange="renderRoomGrid()" class="px-2 py-1 bg-slate-50 border border-slate-300 rounded-lg text-[11px] font-bold text-slate-700 outline-none h-7 cursor-pointer">
+            <option value="all">Hotel: All</option>
+          </select>
+
+          <select id="room-grid-filter-status" onchange="renderRoomGrid()" class="px-2 py-1 bg-slate-50 border border-slate-300 rounded-lg text-[11px] font-bold text-slate-700 outline-none h-7 cursor-pointer">
+            <option value="all">Status: All</option>
+            <option value="occupied">Occupied</option>
+            <option value="vacant">Vacant</option>
+            <option value="overcapacity">Overcapacity</option>
+          </select>
         </div>
 
         <!-- Main Room Cards Container -->
@@ -1566,6 +1576,15 @@
         }
       }
 
+      const adminBtn = document.getElementById('admin-toggle-btn');
+      if (adminBtn) {
+        if (window.isAdminMode) {
+          adminBtn.title = "Click to exit Admin Mode";
+        } else {
+          adminBtn.title = "Admin PIN Unlock";
+        }
+      }
+
       const statusText = document.getElementById('admin-status-text');
       if (statusText) {
         if (window.isSuperAdmin) {
@@ -1587,6 +1606,16 @@
         } else {
           dbText.classList.remove('hidden');
         }
+      }
+    };
+
+    window.toggleAdminLock = function() {
+      if (window.isAdminMode) {
+        window.isAdminMode = false;
+        window.isSuperAdmin = false;
+        window.renderAllViews();
+      } else {
+        window.openAdminModal();
       }
     };
 
@@ -2656,6 +2685,7 @@
 
     function renderRoomGrid() {
       const gridContainer = document.getElementById('room-grid-container');
+      const unassignedContainer = document.getElementById('room-unassigned-container');
       const kpiContainer = document.getElementById('room-grid-kpi');
       const hotelFilterSelect = document.getElementById('room-grid-filter-hotel');
       if (!gridContainer) return;
@@ -2678,6 +2708,7 @@
         gridContainer.innerHTML = `<div class="text-center text-slate-400 text-xs py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
           <i class="fa-solid fa-bed text-3xl mb-2 block text-slate-300"></i> No rooms created in Room Master yet. Super Admin can add rooms in Room Master tab.
         </div>`;
+        if (unassignedContainer) unassignedContainer.innerHTML = '';
         if (kpiContainer) kpiContainer.innerHTML = '';
         return;
       }
@@ -2705,16 +2736,16 @@
       if (kpiContainer) {
         kpiContainer.innerHTML = `
           <div class="bg-purple-50 border border-purple-200 p-2 rounded-xl text-center">
-            <span class="text-[10px] font-bold text-purple-700 uppercase block">Total Rooms</span>
-            <span class="text-base font-extrabold text-purple-900 font-heading">${totalRoomsCount}</span>
+            <span class="text-[10px] font-bold text-purple-700 uppercase block truncate">Total Rooms</span>
+            <span class="text-sm sm:text-base font-extrabold text-purple-900 font-heading">${totalRoomsCount}</span>
           </div>
           <div class="bg-sky-50 border border-sky-200 p-2 rounded-xl text-center">
-            <span class="text-[10px] font-bold text-sky-800 uppercase block">Headcount Assigned</span>
-            <span class="text-base font-extrabold text-sky-900 font-heading">${totalAssignedHcCount} <span class="text-xs font-normal text-slate-400">${totalCapacityCount ? '/ ' + totalCapacityCount : 'HC'}</span></span>
+            <span class="text-[10px] font-bold text-sky-800 uppercase block truncate">Headcount Assigned</span>
+            <span class="text-sm sm:text-base font-extrabold text-sky-900 font-heading">${totalAssignedHcCount} <span class="text-[10px] sm:text-xs font-normal text-slate-400">${totalCapacityCount ? '/ ' + totalCapacityCount : 'HC'}</span></span>
           </div>
           <div class="bg-amber-50 border border-amber-200 p-2 rounded-xl text-center">
-            <span class="text-[10px] font-bold text-amber-800 uppercase block">Headcount Not Yet Assigned</span>
-            <span class="text-base font-extrabold text-amber-900 font-heading">${unassignedHcCount} HC</span>
+            <span class="text-[10px] font-bold text-amber-800 uppercase block truncate">Headcount Unassigned</span>
+            <span class="text-sm sm:text-base font-extrabold text-amber-900 font-heading">${unassignedHcCount} HC</span>
           </div>`;
       }
 
@@ -2722,9 +2753,8 @@
       const filterHotel = document.getElementById('room-grid-filter-hotel')?.value || 'all';
       const filterStatus = document.getElementById('room-grid-filter-status')?.value || 'all';
 
-      let html = '';
-
       // SECTION 1: UNASSIGNED FAMILIES SECTION
+      let unassignedHtml = '';
       let filteredUnassigned = unassignedAttendees;
       if (searchTerm) {
         filteredUnassigned = filteredUnassigned.filter(a => 
@@ -2737,8 +2767,8 @@
         if (filteredUnassigned.length > 0) {
           const filteredUnassignedHc = filteredUnassigned.reduce((sum, a) => sum + (parseInt(a.person) || 0), 0);
           
-          html += `
-            <div class="bg-amber-50/80 border border-amber-300/80 rounded-2xl p-3 sm:p-4 space-y-2.5 shadow-2xs mb-4">
+          unassignedHtml += `
+            <div class="bg-amber-50/80 border border-amber-300/80 rounded-2xl p-3 sm:p-4 space-y-2.5 shadow-2xs">
               <div class="flex items-center justify-between border-b border-amber-200 pb-2">
                 <div class="flex items-center gap-2">
                   <div class="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-black text-xs shadow-xs">
@@ -2763,7 +2793,7 @@
             const clickableClass = window.isAdminMode ? 'cursor-pointer hover:bg-amber-100 hover:border-amber-400' : '';
             const clickHandler = window.isAdminMode ? `onclick="openEditModal('${a.id}')"` : '';
 
-            html += `
+            unassignedHtml += `
               <div ${clickHandler} class="inline-flex items-center gap-1.5 bg-white border border-amber-200/90 px-2.5 py-1 rounded-xl text-xs shadow-2xs transition ${clickableClass}">
                 <span class="font-extrabold text-slate-900">${a.name}</span>
                 <span class="text-[10px] text-slate-500 font-semibold">(${a.set || 'Set 1'})</span>
@@ -2778,13 +2808,18 @@
               </div>`;
           });
 
-          html += `
+          unassignedHtml += `
               </div>
             </div>`;
         }
       }
 
+      if (unassignedContainer) {
+        unassignedContainer.innerHTML = unassignedHtml;
+      }
+
       // SECTION 2: HOTEL & FLOOR ROOM GRID
+      let html = '';
       const hotelGroup = {};
 
       rooms.forEach(r => {
