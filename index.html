@@ -190,7 +190,7 @@
 
         <!-- Application Auto-Incremented Version Badge -->
         <span class="bg-slate-800/90 border border-slate-700 text-amber-400 text-[10px] sm:text-xs font-mono font-bold px-2 py-1 rounded-lg shadow-2xs" title="Application Version">
-          v1.1.4
+          v1.1.8
         </span>
 
         <!-- Admin Lock & Export Buttons (Horizontally Adjacent) -->
@@ -513,70 +513,478 @@
             <h2 class="text-base sm:text-lg font-bold font-heading text-slate-900 flex items-center gap-2">
               <i class="fa-solid fa-route text-emerald-600"></i> Kodaikanal Sightseeing Tour & Travel Itinerary
             </h2>
-            <p class="text-xs text-slate-500">20th September to 23rd September 2026 • Interactive Route Map & Day-by-Day Places</p>
+            <p class="text-xs text-slate-500">20th September to 23rd September 2026 • Interactive Map Search for Every Location</p>
           </div>
           <span class="bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold px-3 py-1 rounded-full self-start sm:self-auto flex items-center gap-1.5">
             <i class="fa-solid fa-calendar-check text-emerald-600"></i> 20th Sept – 23rd Sept, 2026
           </span>
         </div>
 
-        <div class="bg-gradient-to-br from-slate-900 via-railway-900 to-emerald-950 text-white rounded-2xl p-4 sm:p-5 shadow-md border border-slate-800 relative overflow-hidden">
-          <div class="flex items-center justify-between mb-3 border-b border-slate-700/60 pb-2">
-            <span class="text-xs font-extrabold uppercase font-heading tracking-wider text-amber-400 flex items-center gap-1.5">
-              <i class="fa-solid fa-map-location-dot"></i> Visual Tour Route Trail
-            </span>
-            <span class="text-[10px] bg-emerald-800/80 text-emerald-200 px-2 py-0.5 rounded font-mono">Dindigul ↔ Kodaikanal</span>
+        <!-- Detailed Itinerary Day Cards -->
+        <div class="space-y-6">
+          
+          <!-- DAY 1: VALLEY TOUR -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 relative overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-amber-500"></div>
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div>
+                <span class="inline-block bg-amber-100 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wide mb-1 border border-amber-200">
+                  Day 1 • Sunday, 20th Sept 2026
+                </span>
+                <h3 class="font-heading font-extrabold text-slate-900 text-base sm:text-lg flex items-center gap-2">
+                  <i class="fa-solid fa-mountain-sun text-amber-500"></i> Day 1 – Valley Tour
+                </h3>
+                <p class="text-xs text-slate-600 font-medium mt-1">
+                  Proceed for an exciting Valley Tour covering:
+                </p>
+              </div>
+              <span class="text-xs font-mono font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200 w-max shrink-0">
+                14 Places
+              </span>
+            </div>
+
+            <!-- Places List Day 1 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">1</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Rose Garden</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Rose+Garden+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">2</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Moir Point</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Moir+Point+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">3</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Pine Tree Forest</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Pine+Tree+Forest+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">4</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Guna Cave (Devil’s Kitchen)</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Guna+Cave+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">5</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Pillar Rock</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Pillar+Rock+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">6</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Golf Course</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Golf+Course+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">7</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Green Valley View (Suicide Point)</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Green+Valley+View+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">8</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Pambar Falls</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Pambar+Falls+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">9</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Shopping Point</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Shopping+Point+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">10</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Upper Lake View</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Upper+Lake+View+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">11</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Coaker’s Walk</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Coakers+Walk+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">12</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Vaigai Dam View Point</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Vaigai+Dam+View+Point+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">13</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Bryant Park</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Bryant+Park+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-amber-50/50 hover:border-amber-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-800 font-mono font-black text-xs flex items-center justify-center shrink-0">14</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Kodaikanal Lake</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Kodaikanal+Lake" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+            </div>
+
+            <div class="p-2.5 bg-amber-50/80 border border-amber-200 rounded-xl text-xs text-amber-900 font-semibold flex items-center gap-2">
+              <i class="fa-solid fa-hotel text-amber-600 text-sm"></i>
+              <span>After completing the sightseeing tour, return to the hotel.</span>
+            </div>
+
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 pt-1 text-center relative z-10">
-            <div class="bg-slate-800/90 border border-slate-700/80 p-2 rounded-xl flex flex-col items-center justify-center space-y-1">
-              <div class="w-8 h-8 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center text-xs font-black shadow">
-                <i class="fa-solid fa-train"></i>
+          <!-- DAY 2: PICNIC TOUR -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 relative overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500"></div>
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div>
+                <span class="inline-block bg-emerald-100 text-emerald-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wide mb-1 border border-emerald-200">
+                  Day 2 • Monday, 21st Sept 2026
+                </span>
+                <h3 class="font-heading font-extrabold text-slate-900 text-base sm:text-lg flex items-center gap-2">
+                  <i class="fa-solid fa-tree text-emerald-600"></i> Day 2 – Picnic Tour
+                </h3>
+                <p class="text-xs text-slate-600 font-medium mt-1">
+                  Morning: Freshen up and proceed for the Picnic Tour. Places to visit:
+                </p>
               </div>
-              <span class="text-[11px] font-bold text-slate-200 leading-tight">Dindigul Railway</span>
-              <span class="text-[9px] text-amber-300 font-medium">Pickup</span>
+              <span class="text-xs font-mono font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200 w-max shrink-0">
+                10 Places
+              </span>
             </div>
 
-            <div class="bg-slate-800/90 border border-slate-700/80 p-2 rounded-xl flex flex-col items-center justify-center space-y-1">
-              <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-black shadow">
-                <i class="fa-solid fa-mountain-sun"></i>
+            <!-- Places List Day 2 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-emerald-50/50 hover:border-emerald-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-800 font-mono font-black text-xs flex items-center justify-center shrink-0">1</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">La Saleth Church</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=La+Saleth+Church+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
               </div>
-              <span class="text-[11px] font-bold text-slate-200 leading-tight">Kodaikanal Hotel</span>
-              <span class="text-[9px] text-emerald-300 font-medium">Base Check-in</span>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-emerald-50/50 hover:border-emerald-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-800 font-mono font-black text-xs flex items-center justify-center shrink-0">2</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">500-Year-Old Tree</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=500+Year+Old+Tree+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-emerald-50/50 hover:border-emerald-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-800 font-mono font-black text-xs flex items-center justify-center shrink-0">3</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Vattakanal Falls</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Vattakanal+Falls+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-emerald-50/50 hover:border-emerald-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-800 font-mono font-black text-xs flex items-center justify-center shrink-0">4</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Lion Cave</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Lion+Cave+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-emerald-50/50 hover:border-emerald-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-800 font-mono font-black text-xs flex items-center justify-center shrink-0">5</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Mountain View Point</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Mountain+View+Point+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-emerald-50/50 hover:border-emerald-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-800 font-mono font-black text-xs flex items-center justify-center shrink-0">6</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Dolphin’s Nose</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Dolphins+Nose+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-emerald-50/50 hover:border-emerald-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-800 font-mono font-black text-xs flex items-center justify-center shrink-0">7</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Echo Rock</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Echo+Rock+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-emerald-50/50 hover:border-emerald-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-800 font-mono font-black text-xs flex items-center justify-center shrink-0">8</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Bear Shola Falls</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Bear+Shola+Falls+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-emerald-50/50 hover:border-emerald-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-800 font-mono font-black text-xs flex items-center justify-center shrink-0">9</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Bryant Park</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Bryant+Park+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-emerald-50/50 hover:border-emerald-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-800 font-mono font-black text-xs flex items-center justify-center shrink-0">10</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Kodaikanal Lake</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Kodaikanal+Lake" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
             </div>
 
-            <div class="bg-slate-800/90 border border-amber-500/40 p-2 rounded-xl flex flex-col items-center justify-center space-y-1">
-              <div class="w-8 h-8 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center text-xs font-black shadow">
-                <i class="fa-solid fa-camera-retro"></i>
-              </div>
-              <span class="text-[11px] font-bold text-amber-300 leading-tight">Day 1: Valley Tour</span>
-              <span class="text-[9px] text-slate-300 font-medium">14 Scenic Spots</span>
+            <div class="p-2.5 bg-emerald-50/80 border border-emerald-200 rounded-xl text-xs text-emerald-950 font-semibold flex items-center gap-2">
+              <i class="fa-solid fa-fire-flame-curved text-amber-500 text-sm"></i>
+              <span>After completing the sightseeing tour, return to the hotel. Enjoy campfire with Dinner.</span>
             </div>
 
-            <div class="bg-slate-800/90 border border-emerald-500/40 p-2 rounded-xl flex flex-col items-center justify-center space-y-1">
-              <div class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black shadow">
-                <i class="fa-solid fa-fire-flame-curved"></i>
-              </div>
-              <span class="text-[11px] font-bold text-emerald-300 leading-tight">Day 2: Picnic Tour</span>
-              <span class="text-[9px] text-emerald-200 font-medium">10 Spots & Campfire</span>
-            </div>
-
-            <div class="bg-slate-800/90 border border-purple-500/40 p-2 rounded-xl flex flex-col items-center justify-center space-y-1">
-              <div class="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs font-black shadow">
-                <i class="fa-solid fa-tree-city"></i>
-              </div>
-              <span class="text-[11px] font-bold text-purple-300 leading-tight">Day 3: Village Tour</span>
-              <span class="text-[9px] text-purple-200 font-medium">9 Spots & Temple</span>
-            </div>
-
-            <div class="bg-slate-800/90 border border-slate-700/80 p-2 rounded-xl flex flex-col items-center justify-center space-y-1">
-              <div class="w-8 h-8 rounded-full bg-sky-500 text-slate-950 flex items-center justify-center text-xs font-black shadow">
-                <i class="fa-solid fa-person-walking-luggage"></i>
-              </div>
-              <span class="text-[11px] font-bold text-slate-200 leading-tight">Dindigul Railway</span>
-              <span class="text-[9px] text-sky-300 font-medium">Drop & Farewell</span>
-            </div>
           </div>
+
+          <!-- DAY 3: VILLAGE TOUR -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 relative overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-purple-500"></div>
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div>
+                <span class="inline-block bg-purple-100 text-purple-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wide mb-1 border border-purple-200">
+                  Day 3 • Tuesday, 22nd Sept 2026
+                </span>
+                <h3 class="font-heading font-extrabold text-slate-900 text-base sm:text-lg flex items-center gap-2">
+                  <i class="fa-solid fa-tree-city text-purple-600"></i> Day 3 – Village tour
+                </h3>
+                <p class="text-xs text-slate-600 font-medium mt-1">
+                  Morning fresh up, check out from the room. Proceed for the Kodaikanal Village Tour. Places to visit:
+                </p>
+              </div>
+              <span class="text-xs font-mono font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200 w-max shrink-0">
+                9 Places
+              </span>
+            </div>
+
+            <!-- Places List Day 3 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-purple-50/50 hover:border-purple-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-800 font-mono font-black text-xs flex items-center justify-center shrink-0">1</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Rose Garden</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Rose+Garden+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-purple-50/50 hover:border-purple-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-800 font-mono font-black text-xs flex items-center justify-center shrink-0">2</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Gundar Falls</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Gundar+Falls+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-purple-50/50 hover:border-purple-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-800 font-mono font-black text-xs flex items-center justify-center shrink-0">3</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Mahalakshmi Temple</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Mahalakshmi+Temple+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-purple-50/50 hover:border-purple-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-800 font-mono font-black text-xs flex items-center justify-center shrink-0">4</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Palani View</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Palani+View+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-purple-50/50 hover:border-purple-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-800 font-mono font-black text-xs flex items-center justify-center shrink-0">5</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Poombarai Village View</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Poombarai+Village+View+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-purple-50/50 hover:border-purple-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-800 font-mono font-black text-xs flex items-center justify-center shrink-0">6</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Sheep Farm</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Sheep+Farm+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-purple-50/50 hover:border-purple-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-800 font-mono font-black text-xs flex items-center justify-center shrink-0">7</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Murugan Temple 3000 Years Old</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Kurinji+Andavar+Murugan+Temple+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-purple-50/50 hover:border-purple-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-800 font-mono font-black text-xs flex items-center justify-center shrink-0">8</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Lake View</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Lake+View+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+              <div class="flex items-center justify-between p-2 sm:p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-purple-50/50 hover:border-purple-200 transition">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-800 font-mono font-black text-xs flex items-center justify-center shrink-0">9</span>
+                  <span class="text-xs font-bold text-slate-800 truncate">Mannavanur Lake</span>
+                </div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Mannavanur+Lake+Kodaikanal" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] px-2.5 py-1 rounded-lg transition shadow-2xs shrink-0 cursor-pointer">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <span>Map</span>
+                </a>
+              </div>
+
+            </div>
+
+            <div class="p-2.5 bg-purple-50/80 border border-purple-200 rounded-xl text-xs text-purple-950 font-semibold flex items-center gap-2">
+              <i class="fa-solid fa-train text-purple-600 text-sm"></i>
+              <span>After completing the tour, drop at Dindigul Railway Station.</span>
+            </div>
+
+          </div>
+
         </div>
 
       </div>
@@ -2280,10 +2688,10 @@
       let totalAssignedHcCount = 0;
       let unassignedHcCount = 0;
 
-      attendees.forEach(a => {
-        if (!a.room || !a.room.trim()) {
-          unassignedHcCount += (parseInt(a.person) || 0);
-        }
+      const unassignedAttendees = attendees.filter(a => !a.room || !a.room.trim());
+
+      unassignedAttendees.forEach(a => {
+        unassignedHcCount += (parseInt(a.person) || 0);
       });
 
       rooms.forEach(r => {
@@ -2314,6 +2722,69 @@
       const filterHotel = document.getElementById('room-grid-filter-hotel')?.value || 'all';
       const filterStatus = document.getElementById('room-grid-filter-status')?.value || 'all';
 
+      let html = '';
+
+      // SECTION 1: UNASSIGNED FAMILIES SECTION
+      let filteredUnassigned = unassignedAttendees;
+      if (searchTerm) {
+        filteredUnassigned = filteredUnassigned.filter(a => 
+          (a.name && a.name.toLowerCase().includes(searchTerm)) ||
+          (a.set && a.set.toLowerCase().includes(searchTerm))
+        );
+      }
+
+      if (filterStatus === 'all' || filterStatus === 'vacant') {
+        if (filteredUnassigned.length > 0) {
+          const filteredUnassignedHc = filteredUnassigned.reduce((sum, a) => sum + (parseInt(a.person) || 0), 0);
+          
+          html += `
+            <div class="bg-amber-50/80 border border-amber-300/80 rounded-2xl p-3 sm:p-4 space-y-2.5 shadow-2xs mb-4">
+              <div class="flex items-center justify-between border-b border-amber-200 pb-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-black text-xs shadow-xs">
+                    <i class="fa-solid fa-user-slash"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-sm sm:text-base font-extrabold text-amber-950 font-heading leading-tight">Unassigned Families</h3>
+                    <p class="text-[10px] text-amber-800 font-medium">${filteredUnassigned.length} Families • ${filteredUnassignedHc} HC Pending Room Allocation</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-extrabold bg-amber-200 text-amber-900 px-2.5 py-0.5 rounded-full border border-amber-300">
+                  ${filteredUnassigned.length} Pending
+                </span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-1.5 pt-1">`;
+
+          filteredUnassigned.forEach(a => {
+            const veg = a.vegCount !== undefined ? a.vegCount : a.person;
+            const nonVeg = a.nonVegCount || 0;
+
+            const clickableClass = window.isAdminMode ? 'cursor-pointer hover:bg-amber-100 hover:border-amber-400' : '';
+            const clickHandler = window.isAdminMode ? `onclick="openEditModal('${a.id}')"` : '';
+
+            html += `
+              <div ${clickHandler} class="inline-flex items-center gap-1.5 bg-white border border-amber-200/90 px-2.5 py-1 rounded-xl text-xs shadow-2xs transition ${clickableClass}">
+                <span class="font-extrabold text-slate-900">${a.name}</span>
+                <span class="text-[10px] text-slate-500 font-semibold">(${a.set || 'Set 1'})</span>
+                <span class="text-[10px] font-mono font-bold text-amber-800 bg-amber-100 px-1.5 py-0.2 rounded border border-amber-200">${a.person || 1} HC</span>
+                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200"><i class="fa-solid fa-leaf text-[8px]"></i> ${veg}</span>
+                ${nonVeg > 0 ? `<span class="text-[10px] font-bold text-rose-700 bg-rose-50 px-1 py-0.2 rounded border border-rose-200"><i class="fa-solid fa-drumstick-bite text-[8px]"></i> ${nonVeg}</span>` : ''}
+                ${window.isAdminMode ? `
+                  <button onclick="event.stopPropagation(); openRoomPicker('${a.id}')" title="Assign Room" class="no-print bg-amber-500 hover:bg-amber-600 text-slate-950 text-[10px] font-bold px-1.5 py-0.5 rounded-md transition ml-1 flex items-center gap-1 shadow-2xs">
+                    <i class="fa-solid fa-plus text-[9px]"></i> Assign
+                  </button>
+                ` : ''}
+              </div>`;
+          });
+
+          html += `
+              </div>
+            </div>`;
+        }
+      }
+
+      // SECTION 2: HOTEL & FLOOR ROOM GRID
       const hotelGroup = {};
 
       rooms.forEach(r => {
@@ -2351,10 +2822,9 @@
         });
       });
 
-      let html = '';
       const hotels = Object.keys(hotelGroup).sort();
 
-      if (hotels.length === 0) {
+      if (hotels.length === 0 && filteredUnassigned.length === 0) {
         gridContainer.innerHTML = `<div class="text-center text-slate-400 text-xs py-8 bg-slate-50 rounded-2xl border border-slate-200">
           <i class="fa-solid fa-filter-circle-xmark text-2xl mb-1 block text-slate-300"></i> No rooms match current filters.
         </div>`;
@@ -2406,34 +2876,18 @@
 
               <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
                 <div class="table-container overflow-x-auto">
-                  <table class="w-full text-left border-collapse min-w-[500px]">
+                  <table class="w-full text-left border-collapse min-w-[450px]">
                     <thead>
                       <tr class="bg-slate-100 text-slate-700 uppercase text-[10px] font-extrabold tracking-wider border-b border-slate-200">
-                        <th class="py-1.5 px-2.5 w-24">Room</th>
-                        <th class="py-1.5 px-2 text-center w-24">Status</th>
+                        <th class="py-1.5 px-2.5 w-28">Room</th>
+                        <th class="py-1.5 px-2 text-center w-20">HC</th>
                         <th class="py-1.5 px-2.5">Occupant Families & Food</th>
-                        <th class="py-1.5 px-2 text-center w-16">HC</th>
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-xs font-medium">`;
 
           roomCards.forEach(r => {
             const cap = r.capacity ? parseInt(r.capacity) : null;
-            let badgeClass = "bg-slate-100 text-slate-600 border-slate-200";
-            let statusText = "Vacant";
-
-            if (r.totalOccupantsHc > 0) {
-              if (cap && r.totalOccupantsHc > cap) {
-                badgeClass = "bg-rose-100 text-rose-800 border-rose-300";
-                statusText = `Overcap`;
-              } else if (cap && r.totalOccupantsHc === cap) {
-                badgeClass = "bg-amber-100 text-amber-800 border-amber-300";
-                statusText = `Full`;
-              } else {
-                badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-300";
-                statusText = `Occupied`;
-              }
-            }
 
             let occupantsHtml = '';
             if (r.occupants.length === 0) {
@@ -2444,14 +2898,17 @@
                 const veg = occ.vegCount !== undefined ? occ.vegCount : occ.person;
                 const nonVeg = occ.nonVegCount || 0;
 
+                const clickableClass = window.isAdminMode ? 'cursor-pointer hover:bg-amber-100 hover:border-amber-300' : '';
+                const clickHandler = window.isAdminMode ? `onclick="openEditModal('${occ.id}')"` : '';
+
                 occupantsHtml += `
-                  <div class="inline-flex items-center gap-1 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-lg text-xs shadow-2xs">
+                  <div ${clickHandler} class="inline-flex items-center gap-1 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-lg text-xs shadow-2xs transition ${clickableClass}">
                     <span class="font-bold text-slate-900">${occ.name}</span>
                     <span class="text-[10px] text-slate-500">(${occ.set || 'Set 1'})</span>
                     <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200"><i class="fa-solid fa-leaf text-[8px]"></i> ${veg}</span>
                     ${nonVeg > 0 ? `<span class="text-[10px] font-bold text-rose-700 bg-rose-50 px-1 py-0.2 rounded border border-rose-200"><i class="fa-solid fa-drumstick-bite text-[8px]"></i> ${nonVeg}</span>` : ''}
                     ${window.isAdminMode ? `
-                      <button onclick="openRoomPicker('${occ.id}')" title="Change Room" class="no-print p-0.5 text-slate-400 hover:text-amber-600 transition cursor-pointer ml-0.5">
+                      <button onclick="event.stopPropagation(); openRoomPicker('${occ.id}')" title="Change Room" class="no-print p-0.5 text-slate-400 hover:text-amber-600 transition cursor-pointer ml-0.5">
                         <i class="fa-solid fa-right-left text-[10px]"></i>
                       </button>
                     ` : ''}
@@ -2469,16 +2926,11 @@
                   </div>
                   <span class="text-[10px] font-normal text-slate-400 block">${r.beds ? r.beds + ' Beds' : ''}${r.capacity ? ' (Max ' + r.capacity + ')' : ''}</span>
                 </td>
-                <td class="py-1.5 px-2 text-center whitespace-nowrap">
-                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${badgeClass}">
-                    ${statusText}
-                  </span>
+                <td class="py-1.5 px-2 text-center font-mono font-bold text-slate-800 whitespace-nowrap">
+                  ${r.totalOccupantsHc}${cap ? '<span class="text-slate-400 font-normal">/' + cap + '</span>' : ''}
                 </td>
                 <td class="py-1.5 px-2.5">
                   ${occupantsHtml}
-                </td>
-                <td class="py-1.5 px-2 text-center font-mono font-bold text-slate-800 whitespace-nowrap">
-                  ${r.totalOccupantsHc}${cap ? '<span class="text-slate-400 font-normal">/' + cap + '</span>' : ''}
                 </td>
               </tr>`;
           });
