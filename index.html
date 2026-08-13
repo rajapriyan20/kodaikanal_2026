@@ -398,7 +398,7 @@
                 <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap">Food</th>
                 <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-left whitespace-nowrap">Assigned Room</th>
                 <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap">Gift Bag</th>
-                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap">Photo count</th>
+                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap">Photo</th>
               </tr>
             </thead>
             <tbody id="attendee-tbody" class="divide-y divide-slate-100 text-xs sm:text-sm font-medium">
@@ -1450,7 +1450,7 @@
             </div>
             <div class="text-[11px] grid grid-cols-2 gap-x-1 gap-y-0.5 text-slate-600 font-medium pt-0.5">
               <span>Hc: <strong class="text-slate-900">${s.headcount}</strong></span>
-              <span>Gifts: <strong class="text-sky-700">${s.giftsIssued}/${s.gifts}</strong></span>
+              <span>Gift bag: <strong class="text-sky-700">${s.giftsIssued}/${s.gifts}</strong></span>
               <span>Photos: <strong class="text-indigo-700">${s.photosIssued}/${s.photos}</strong></span>
               <span class="text-emerald-700"><i class="fa-solid fa-leaf text-[9px]"></i> <strong>${s.veg}</strong></span>
             </div>
@@ -1822,6 +1822,10 @@
       const tbody = document.getElementById('attendee-tbody');
       if (!tbody) return;
 
+      if (window._cleanupDragListeners) {
+        window._cleanupDragListeners();
+      }
+
       const handlePointerDown = (e) => {
         if (!window.isAdminMode) return;
         
@@ -1854,6 +1858,8 @@
           
           tr.classList.add('bg-amber-100', 'ring-2', 'ring-amber-500', 'shadow-lg', 'scale-[1.01]', 'z-30');
           showDragNotice(true);
+          document.body.style.touchAction = 'none';
+          document.body.style.overflow = 'hidden';
         }, 350);
       };
 
@@ -1902,6 +1908,9 @@
           pressTimer = null;
         }
 
+        document.body.style.touchAction = '';
+        document.body.style.overflow = '';
+
         const sourceTr = dragSourceId ? tbody.querySelector(`tr[data-id="${dragSourceId}"]`) : null;
         if (sourceTr) {
           sourceTr.classList.remove('bg-amber-100', 'ring-2', 'ring-amber-500', 'shadow-lg', 'scale-[1.01]', 'z-30');
@@ -1928,15 +1937,25 @@
         currentHoveredRowId = null;
       };
 
-      tbody.onmousedown = handlePointerDown;
-      tbody.ontouchstart = handlePointerDown;
+      tbody.addEventListener('mousedown', handlePointerDown);
+      tbody.addEventListener('touchstart', handlePointerDown, { passive: true });
 
-      window.onmousemove = handlePointerMove;
-      window.ontouchmove = handlePointerMove;
+      window.addEventListener('mousemove', handlePointerMove);
+      window.addEventListener('touchmove', handlePointerMove, { passive: false });
 
-      window.onmouseup = handlePointerUp;
-      window.ontouchend = handlePointerUp;
-      window.ontouchcancel = handlePointerUp;
+      window.addEventListener('mouseup', handlePointerUp);
+      window.addEventListener('touchend', handlePointerUp);
+      window.addEventListener('touchcancel', handlePointerUp);
+
+      window._cleanupDragListeners = () => {
+        tbody.removeEventListener('mousedown', handlePointerDown);
+        tbody.removeEventListener('touchstart', handlePointerDown);
+        window.removeEventListener('mousemove', handlePointerMove);
+        window.removeEventListener('touchmove', handlePointerMove);
+        window.removeEventListener('mouseup', handlePointerUp);
+        window.removeEventListener('touchend', handlePointerUp);
+        window.removeEventListener('touchcancel', handlePointerUp);
+      };
     }
 
     async function reorderAttendeeRows(sourceId, targetId) {
