@@ -68,6 +68,26 @@
       .no-print {
         display: none !important;
       }
+      @page {
+        size: portrait;
+        margin: 10mm 8mm;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      #printable-area {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .table-container {
+        max-height: none !important;
+        overflow: visible !important;
+      }
     }
     /* Pseudo Fullscreen Fallback Mode for iFrames & WebViews */
     body.pseudo-fullscreen-mode {
@@ -170,7 +190,7 @@
 
         <!-- Application Auto-Incremented Version Badge -->
         <span class="bg-slate-800/90 border border-slate-700 text-amber-400 text-[10px] sm:text-xs font-mono font-bold px-2 py-1 rounded-lg shadow-2xs" title="Application Version">
-          v1.1.3
+          v1.1.4
         </span>
 
         <!-- Admin Lock & Export Buttons (Horizontally Adjacent) -->
@@ -440,17 +460,47 @@
 
     <!-- VIEW 3: ROOM ALLOCATION GRID -->
     <div id="view-rooms" class="hidden space-y-4">
-      <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-        <div>
-          <h2 class="text-base sm:text-lg font-bold font-heading text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-building text-amber-500"></i> Room Allocation Grid
-          </h2>
-          <p class="text-xs text-slate-500">Visual distribution of rooms classified and grouped by Hotel property and Floor level.</p>
+      <div class="bg-white p-3 sm:p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        
+        <!-- Header & Search/Filters -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold font-heading text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-hotel text-purple-600"></i> Room Allocation & Occupancy Grid
+            </h2>
+            <p class="text-xs text-slate-500">Visual distribution of rooms classified and grouped by Hotel property and Floor level.</p>
+          </div>
+
+          <!-- Interactive Mobile Room Filters -->
+          <div class="no-print flex flex-wrap items-center gap-2">
+            <div class="relative flex-1 min-w-[130px]">
+              <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input type="text" id="room-grid-search" oninput="renderRoomGrid()" placeholder="Search room or occupant..." class="w-full pl-7 pr-2.5 py-1 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-1 focus:ring-purple-600 focus:bg-white outline-none transition">
+            </div>
+
+            <select id="room-grid-filter-hotel" onchange="renderRoomGrid()" class="px-2 py-1 bg-slate-50 border border-slate-300 rounded-lg text-[11px] font-bold text-slate-700 outline-none h-7 cursor-pointer">
+              <option value="all">Hotel: All</option>
+            </select>
+
+            <select id="room-grid-filter-status" onchange="renderRoomGrid()" class="px-2 py-1 bg-slate-50 border border-slate-300 rounded-lg text-[11px] font-bold text-slate-700 outline-none h-7 cursor-pointer">
+              <option value="all">Status: All</option>
+              <option value="occupied">Occupied</option>
+              <option value="vacant">Vacant</option>
+              <option value="overcapacity">Overcapacity</option>
+            </select>
+          </div>
         </div>
 
+        <!-- Occupancy Bar KPI Summary -->
+        <div id="room-grid-kpi" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <!-- Dynamically populated via JS -->
+        </div>
+
+        <!-- Main Room Cards Container -->
         <div id="room-grid-container" class="space-y-6">
           <!-- Dynamically populated via JS -->
         </div>
+
       </div>
     </div>
 
@@ -699,7 +749,7 @@
     </div>
   </div>
 
-  <!-- MODAL: SECURITY ADMIN PIN UNLOCK (Configured for numeric-only keypad & auto-unlock on 4th character) -->
+  <!-- MODAL: SECURITY ADMIN PIN UNLOCK -->
   <div id="modal-admin-pin" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 z-50 hidden">
     <div class="bg-white w-full max-w-xs rounded-2xl shadow-xl border border-slate-200 p-5 text-center space-y-4">
       <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto text-amber-600 text-xl">
@@ -708,7 +758,7 @@
 
       <div>
         <h3 class="font-extrabold font-heading text-base text-slate-900">Security PIN Unlock</h3>
-        <p class="text-xs text-slate-500">Enter Admin PIN or Super Admin PIN to unlock management access.</p>
+        <p class="text-xs text-slate-500 mt-1">Enter Admin PIN or Super Admin PIN to unlock management access.</p>
       </div>
 
       <div class="space-y-2">
@@ -901,9 +951,52 @@
     let countdownInterval = null;
     let activePickerAttendeeId = null;
 
+    window.isAttendeeInRoom = function(attendee, roomObj) {
+      if (!attendee || !attendee.room || !attendee.room.trim() || !roomObj) return false;
+      
+      const attRoom = attendee.room.toLowerCase().replace(/\s*-\s*/g, ' ').replace(/\s*\([^)]*\)/g, '').trim();
+      const hotel = (roomObj.hotelName || '').toLowerCase().trim();
+      const roomNo = (roomObj.roomNo || '').toLowerCase().trim();
+
+      if (!hotel || !roomNo) return false;
+
+      // Must contain hotel name
+      if (!attRoom.includes(hotel)) return false;
+
+      // Match room number safely as a distinct word token
+      const roomRegex = new RegExp(`(?:^|\\s|\\-)` + roomNo.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + `(?:$|\\s|\\()`, 'i');
+      return roomRegex.test(attRoom) || attRoom.endsWith(' ' + roomNo) || attRoom.endsWith('-' + roomNo);
+    };
+
     window.formatRoomForTable = function(roomStr) {
       if (!roomStr) return '';
       return roomStr.replace(/\s*-\s*/g, ' ').trim();
+    };
+
+    window.changeFontSize = function(mode) {
+      const btnNormal = document.getElementById('btn-font-normal');
+      const btnLarge = document.getElementById('btn-font-large');
+      if (mode === 'large') {
+        document.documentElement.style.fontSize = '18px';
+        if (btnLarge) {
+          btnLarge.classList.add('bg-slate-700', 'text-white');
+          btnLarge.classList.remove('text-slate-300');
+        }
+        if (btnNormal) {
+          btnNormal.classList.remove('bg-slate-700', 'text-white');
+          btnNormal.classList.add('text-slate-300');
+        }
+      } else {
+        document.documentElement.style.fontSize = '16px';
+        if (btnNormal) {
+          btnNormal.classList.add('bg-slate-700', 'text-white');
+          btnNormal.classList.remove('text-slate-300');
+        }
+        if (btnLarge) {
+          btnLarge.classList.remove('bg-slate-700', 'text-white');
+          btnLarge.classList.add('text-slate-300');
+        }
+      }
     };
 
     window.openWelcomeScreen = function() {
@@ -1037,6 +1130,336 @@
       }
     };
 
+    window.updateAdminVisibility = function() {
+      const adminOnlyEls = document.querySelectorAll('.admin-only');
+      adminOnlyEls.forEach(el => {
+        if (window.isAdminMode) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+
+      const superAdminOnlyEls = document.querySelectorAll('.superadmin-only');
+      superAdminOnlyEls.forEach(el => {
+        if (window.isSuperAdmin) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+
+      const lockIcon = document.getElementById('admin-lock-icon');
+      if (lockIcon) {
+        if (window.isAdminMode) {
+          lockIcon.className = "fa-solid fa-lock-open text-emerald-400";
+        } else {
+          lockIcon.className = "fa-solid fa-key text-amber-400";
+        }
+      }
+
+      const statusText = document.getElementById('admin-status-text');
+      if (statusText) {
+        if (window.isSuperAdmin) {
+          statusText.innerText = "SUPER";
+          statusText.classList.remove('hidden');
+        } else if (window.isAdminMode) {
+          statusText.innerText = "ADMIN";
+          statusText.classList.remove('hidden');
+        } else {
+          statusText.innerText = "";
+          statusText.classList.add('hidden');
+        }
+      }
+
+      const dbText = document.getElementById('db-status-text');
+      if (dbText) {
+        if (window.isAdminMode) {
+          dbText.classList.add('hidden');
+        } else {
+          dbText.classList.remove('hidden');
+        }
+      }
+    };
+
+    window.openAdminModal = function() {
+      const input = document.getElementById('admin-pin-input');
+      const err = document.getElementById('admin-pin-error');
+      if (input) input.value = '';
+      if (err) err.classList.add('hidden');
+      const modal = document.getElementById('modal-admin-pin');
+      if (modal) modal.classList.remove('hidden');
+      if (input) setTimeout(() => input.focus(), 100);
+    };
+
+    window.closeAdminModal = function() {
+      const modal = document.getElementById('modal-admin-pin');
+      if (modal) modal.classList.add('hidden');
+    };
+
+    window.handlePinInput = function(inputEl) {
+      const err = document.getElementById('admin-pin-error');
+      if (err) err.classList.add('hidden');
+      if (inputEl && inputEl.value.length === 4) {
+        window.submitAdminPin();
+      }
+    };
+
+    window.submitAdminPin = function() {
+      const input = document.getElementById('admin-pin-input');
+      const err = document.getElementById('admin-pin-error');
+      if (!input) return;
+
+      const pin = input.value.trim();
+      if (pin === "6677") {
+        window.isAdminMode = true;
+        window.isSuperAdmin = false;
+      } else if (pin === "6789") {
+        window.isAdminMode = true;
+        window.isSuperAdmin = true;
+      } else {
+        if (err) err.classList.remove('hidden');
+        input.value = '';
+        return;
+      }
+
+      input.blur();
+      window.closeAdminModal();
+      window.renderAllViews();
+    };
+
+    window.filterAttendees = function() {
+      renderTable();
+    };
+
+    window.openAddModal = function() {
+      if (!window.isAdminMode) return;
+      document.getElementById('modal-title').innerText = "Add Family Details";
+      document.getElementById('form-id').value = "";
+      document.getElementById('form-name').value = "";
+      document.getElementById('form-set').value = "Set 1";
+      document.getElementById('form-person').value = "2";
+      document.getElementById('form-veg').value = "2";
+      document.getElementById('form-nonveg').value = "0";
+      document.getElementById('form-room').value = "";
+      document.getElementById('form-giftbag').value = "1";
+      document.getElementById('form-photocop').value = "1";
+      
+      const delBtn = document.getElementById('btn-modal-delete-attendee');
+      if (delBtn) delBtn.classList.add('hidden');
+
+      populateRoomDropdown();
+      document.getElementById('modal-attendee').classList.remove('hidden');
+    };
+
+    window.openEditModal = function(id) {
+      if (!window.isAdminMode) return;
+      const list = window.attendeesList || [];
+      const item = list.find(a => a.id === id);
+      if (!item) return;
+
+      document.getElementById('modal-title').innerText = "Edit Family Details";
+      document.getElementById('form-id').value = item.id;
+      document.getElementById('form-name').value = item.name || "";
+      document.getElementById('form-set').value = item.set || "Set 1";
+      document.getElementById('form-person').value = item.person || 2;
+      document.getElementById('form-veg').value = item.vegCount !== undefined ? item.vegCount : (item.person || 2);
+      document.getElementById('form-nonveg').value = item.nonVegCount || 0;
+      
+      populateRoomDropdown();
+      document.getElementById('form-room').value = item.room || "";
+      document.getElementById('form-giftbag').value = item.giftBag || 1;
+      document.getElementById('form-photocop').value = item.photoCop || 1;
+
+      const delBtn = document.getElementById('btn-modal-delete-attendee');
+      if (delBtn) delBtn.classList.remove('hidden');
+
+      document.getElementById('modal-attendee').classList.remove('hidden');
+    };
+
+    window.closeAttendeeModal = function() {
+      document.getElementById('modal-attendee').classList.add('hidden');
+    };
+
+    window.autoAdjustFoodCounts = function() {
+      const pInput = document.getElementById('form-person');
+      const vInput = document.getElementById('form-veg');
+      const nvInput = document.getElementById('form-nonveg');
+      if (!pInput || !vInput || !nvInput) return;
+
+      const hc = parseInt(pInput.value) || 1;
+      vInput.value = hc;
+      nvInput.value = 0;
+    };
+
+    window.saveAttendeeForm = async function(e) {
+      e.preventDefault();
+      const idInput = document.getElementById('form-id').value;
+      const list = window.attendeesList || [];
+      let existing = list.find(a => a.id === idInput);
+
+      const newId = idInput || 'att_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      
+      const data = {
+        id: newId,
+        name: document.getElementById('form-name').value.trim(),
+        set: document.getElementById('form-set').value.trim() || 'Set 1',
+        person: parseInt(document.getElementById('form-person').value) || 1,
+        vegCount: parseInt(document.getElementById('form-veg').value) || 0,
+        nonVegCount: parseInt(document.getElementById('form-nonveg').value) || 0,
+        room: document.getElementById('form-room').value,
+        giftBag: parseInt(document.getElementById('form-giftbag').value) || 0,
+        photoCop: parseInt(document.getElementById('form-photocop').value) || 0,
+        giftIssued: existing ? (existing.giftIssued || false) : false,
+        photoIssued: existing ? (existing.photoIssued || false) : false,
+        order: existing ? ((typeof existing.order === 'number') ? existing.order : list.length) : list.length
+      };
+
+      if (existing) {
+        Object.assign(existing, data);
+      } else {
+        window.attendeesList.push(data);
+      }
+
+      window.closeAttendeeModal();
+      window.renderAllViews();
+
+      if (window.dbOps && window.dbOps.saveAttendee) {
+        await window.dbOps.saveAttendee(data);
+      }
+    };
+
+    window.deleteFromAttendeeModal = function() {
+      const id = document.getElementById('form-id').value;
+      if (id) {
+        window.closeAttendeeModal();
+        window.openDeleteModal('attendee', id);
+      }
+    };
+
+    window.openAddRoomModal = function() {
+      if (!window.isSuperAdmin) return;
+      document.getElementById('modal-room-title').innerText = "Add Room Master";
+      document.getElementById('form-room-id').value = "";
+      document.getElementById('form-hotel-name').value = "";
+      document.getElementById('form-room-number').value = "";
+      document.getElementById('form-room-floor').value = "";
+      document.getElementById('form-room-beds').value = "";
+      document.getElementById('form-room-capacity').value = "";
+      document.getElementById('modal-room').classList.remove('hidden');
+    };
+
+    window.openEditRoomModal = function(id) {
+      if (!window.isSuperAdmin) return;
+      const rooms = window.roomsList || [];
+      const room = rooms.find(r => r.id === id);
+      if (!room) return;
+
+      document.getElementById('modal-room-title').innerText = "Edit Room Master";
+      document.getElementById('form-room-id').value = room.id;
+      document.getElementById('form-hotel-name').value = room.hotelName || "";
+      document.getElementById('form-room-number').value = room.roomNo || "";
+      document.getElementById('form-room-floor').value = room.floor || "";
+      document.getElementById('form-room-beds').value = room.beds || "";
+      document.getElementById('form-room-capacity').value = room.capacity || "";
+      document.getElementById('modal-room').classList.remove('hidden');
+    };
+
+    window.closeRoomModal = function() {
+      document.getElementById('modal-room').classList.add('hidden');
+    };
+
+    window.saveRoomMasterForm = async function(e) {
+      e.preventDefault();
+      const idInput = document.getElementById('form-room-id').value;
+      const rooms = window.roomsList || [];
+      let existing = rooms.find(r => r.id === idInput);
+
+      const newId = idInput || 'rm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+
+      const data = {
+        id: newId,
+        hotelName: document.getElementById('form-hotel-name').value.trim(),
+        roomNo: document.getElementById('form-room-number').value.trim(),
+        floor: document.getElementById('form-room-floor').value,
+        beds: document.getElementById('form-room-beds').value ? parseInt(document.getElementById('form-room-beds').value) : null,
+        capacity: document.getElementById('form-room-capacity').value ? parseInt(document.getElementById('form-room-capacity').value) : null
+      };
+
+      if (existing) {
+        Object.assign(existing, data);
+      } else {
+        window.roomsList.push(data);
+      }
+
+      window.closeRoomModal();
+      window.renderAllViews();
+
+      if (window.dbOps && window.dbOps.saveRoom) {
+        await window.dbOps.saveRoom(data);
+      }
+    };
+
+    window.duplicateRoomRecord = async function(id) {
+      if (!window.isSuperAdmin) return;
+      const rooms = window.roomsList || [];
+      const room = rooms.find(r => r.id === id);
+      if (!room) return;
+
+      const newRoom = {
+        ...room,
+        id: 'rm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        roomNo: room.roomNo + ' (Copy)'
+      };
+
+      window.roomsList.push(newRoom);
+      window.renderAllViews();
+
+      if (window.dbOps && window.dbOps.saveRoom) {
+        await window.dbOps.saveRoom(newRoom);
+      }
+    };
+
+    window.openDeleteModal = function(type, id) {
+      pendingDeleteTarget = { type, id };
+      const nameEl = document.getElementById('delete-record-name');
+      if (nameEl) {
+        if (type === 'attendee') {
+          const att = (window.attendeesList || []).find(a => a.id === id);
+          nameEl.innerText = att ? att.name : 'this family';
+        } else if (type === 'room') {
+          const rm = (window.roomsList || []).find(r => r.id === id);
+          nameEl.innerText = rm ? `${rm.hotelName} Room ${rm.roomNo}` : 'this room';
+        }
+      }
+      document.getElementById('modal-delete').classList.remove('hidden');
+    };
+
+    window.closeDeleteModal = function() {
+      pendingDeleteTarget = null;
+      document.getElementById('modal-delete').classList.add('hidden');
+    };
+
+    window.confirmDeleteRecord = async function() {
+      if (!pendingDeleteTarget) return;
+      const { type, id } = pendingDeleteTarget;
+
+      if (type === 'attendee') {
+        window.attendeesList = (window.attendeesList || []).filter(a => a.id !== id);
+        if (window.dbOps && window.dbOps.deleteAttendee) {
+          await window.dbOps.deleteAttendee(id);
+        }
+      } else if (type === 'room') {
+        window.roomsList = (window.roomsList || []).filter(r => r.id !== id);
+        if (window.dbOps && window.dbOps.deleteRoom) {
+          await window.dbOps.deleteRoom(id);
+        }
+      }
+
+      window.closeDeleteModal();
+      window.renderAllViews();
+    };
+
     window.renderAllViews = function() {
       renderSummaryCounters();
       renderSetSummaryCards();
@@ -1044,7 +1467,7 @@
       renderRoomMasterTable();
       renderRoomGrid();
       populateRoomDropdown();
-      updateAdminVisibility();
+      window.updateAdminVisibility();
       if (typeof window.syncTableScrollMode === 'function') {
         window.syncTableScrollMode();
       }
@@ -1196,7 +1619,7 @@
 
           const roomLabel = `${r.hotelName} - ${r.roomNo}${floorShort ? ' (' + floorShort + ')' : ''}`;
 
-          const assignedAttendees = attendees.filter(a => a.room && (a.room === roomLabel || a.room.includes(r.roomNo)));
+          const assignedAttendees = attendees.filter(a => window.isAttendeeInRoom(a, r));
           const assignedHeadcount = assignedAttendees.reduce((sum, a) => sum + (parseInt(a.person) || 0), 0);
 
           const capacityStr = r.capacity ? `/${r.capacity}` : '';
@@ -1281,11 +1704,11 @@
           return;
         }
 
-        const assignedAttendees = list.filter(a => a.room && (a.room === roomLabelWithHyphen || a.room.includes(r.roomNo)));
+        const assignedAttendees = list.filter(a => window.isAttendeeInRoom(a, r));
         const assignedHeadcount = assignedAttendees.reduce((sum, a) => sum + (parseInt(a.person) || 0), 0);
         const capacityStr = r.capacity ? `/${r.capacity}` : '';
 
-        const isSelected = (currentRoomVal === roomLabelWithHyphen || (currentRoomVal && currentRoomVal.includes(r.roomNo)));
+        const isSelected = window.isAttendeeInRoom(currentAttendee, r);
 
         html += `
           <button onclick="selectRoomForAttendee('${roomLabelWithHyphen.replace(/'/g, "\\'")}')" class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-between cursor-pointer ${isSelected ? 'bg-amber-500 text-slate-950 shadow-xs' : 'bg-white hover:bg-slate-100 text-slate-800 border border-slate-200'}">
@@ -1501,7 +1924,6 @@
       const headerHeight = header ? header.offsetHeight : 44;
       const rect = container.getBoundingClientRect();
 
-      // Check if page has scrolled down so table top meets or goes under the sticky top header
       if (rect.top <= headerHeight + 2) {
         if (container.style.overflowY !== 'auto') {
           container.style.overflowY = 'auto';
@@ -1509,7 +1931,6 @@
         const remainingHeight = window.innerHeight - headerHeight - 12;
         container.style.maxHeight = `${remainingHeight}px`;
       } else {
-        // When above top sticky threshold, keep inner overflow hidden so touch/scroll gestures move the main page
         if (container.scrollTop <= 0) {
           if (container.style.overflowY !== 'hidden') {
             container.style.overflowY = 'hidden';
@@ -1537,11 +1958,10 @@
       container.addEventListener('touchmove', (e) => {
         if (!e.touches || !e.touches[0]) return;
         const currentY = e.touches[0].clientY;
-        const deltaY = currentY - touchStartY; // positive = dragging down (scrolling page up)
+        const deltaY = currentY - touchStartY;
         const headerHeight = document.querySelector('header')?.offsetHeight || 44;
         const rect = container.getBoundingClientRect();
 
-        // Pulling down at top of table list -> switch to page scroll up
         if (container.scrollTop <= 0 && deltaY > 0) {
           container.style.overflowY = 'hidden';
           container.style.maxHeight = 'none';
@@ -1556,14 +1976,12 @@
         const rect = container.getBoundingClientRect();
 
         if (container.scrollTop <= 0 && e.deltaY < 0) {
-          // Scrolling up at top of table -> let page scroll up
           container.style.overflowY = 'hidden';
           container.style.maxHeight = 'none';
         } else if (rect.top <= headerHeight + 2) {
           container.style.overflowY = 'auto';
           container.style.maxHeight = `${window.innerHeight - headerHeight - 12}px`;
         } else if (e.deltaY > 0) {
-          // Scrolling down when table is not at top -> keep overflow hidden so page scrolls down
           container.style.overflowY = 'hidden';
           container.style.maxHeight = 'none';
         }
@@ -1784,8 +2202,7 @@
           else floorShort = r.floor;
         }
 
-        const roomLabel = `${r.hotelName} ${r.roomNo}${floorShort ? ' (' + floorShort + ')' : ''}`;
-        const assignedAttendees = attendees.filter(a => a.room && (a.room === roomLabel || a.room.includes(r.roomNo)));
+        const assignedAttendees = attendees.filter(a => window.isAttendeeInRoom(a, r));
         const totalAssignedHeadcount = assignedAttendees.reduce((sum, a) => sum + (parseInt(a.person) || 0), 0);
 
         const cap = r.capacity ? parseInt(r.capacity) : null;
@@ -1831,17 +2248,71 @@
 
     function renderRoomGrid() {
       const gridContainer = document.getElementById('room-grid-container');
+      const kpiContainer = document.getElementById('room-grid-kpi');
+      const hotelFilterSelect = document.getElementById('room-grid-filter-hotel');
       if (!gridContainer) return;
 
       const rooms = window.roomsList || [];
       const attendees = window.attendeesList || [];
 
+      if (hotelFilterSelect) {
+        const currentSelectedHotel = hotelFilterSelect.value || 'all';
+        const uniqueHotels = Array.from(new Set(rooms.map(r => r.hotelName).filter(Boolean))).sort();
+        let hHtml = '<option value="all">Hotel: All</option>';
+        uniqueHotels.forEach(h => {
+          hHtml += `<option value="${h}">Hotel: ${h}</option>`;
+        });
+        hotelFilterSelect.innerHTML = hHtml;
+        hotelFilterSelect.value = currentSelectedHotel;
+      }
+
       if (rooms.length === 0 && attendees.length === 0) {
-        gridContainer.innerHTML = `<div class="text-center text-slate-400 text-xs py-8">
-          <i class="fa-solid fa-bed text-3xl mb-2 block text-slate-300"></i> No rooms allocated or added to Room Master yet.
+        gridContainer.innerHTML = `<div class="text-center text-slate-400 text-xs py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+          <i class="fa-solid fa-bed text-3xl mb-2 block text-slate-300"></i> No rooms created in Room Master yet. Super Admin can add rooms in Room Master tab.
         </div>`;
+        if (kpiContainer) kpiContainer.innerHTML = '';
         return;
       }
+
+      let totalRoomsCount = rooms.length;
+      let occupiedRoomsCount = 0;
+      let totalCapacityCount = 0;
+      let totalAssignedHcCount = 0;
+
+      rooms.forEach(r => {
+        const occs = attendees.filter(a => window.isAttendeeInRoom(a, r));
+        const hc = occs.reduce((sum, a) => sum + (parseInt(a.person) || 0), 0);
+        if (hc > 0) occupiedRoomsCount++;
+        totalAssignedHcCount += hc;
+        if (r.capacity) totalCapacityCount += parseInt(r.capacity);
+      });
+
+      const vacantRoomsCount = totalRoomsCount - occupiedRoomsCount;
+      const occupancyRate = totalRoomsCount > 0 ? Math.round((occupiedRoomsCount / totalRoomsCount) * 100) : 0;
+
+      if (kpiContainer) {
+        kpiContainer.innerHTML = `
+          <div class="bg-purple-50 border border-purple-200 p-2 rounded-xl text-center">
+            <span class="text-[10px] font-bold text-purple-700 uppercase block">Total Rooms</span>
+            <span class="text-base font-extrabold text-purple-900 font-heading">${totalRoomsCount}</span>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 p-2 rounded-xl text-center">
+            <span class="text-[10px] font-bold text-emerald-700 uppercase block">Occupied / Vacant</span>
+            <span class="text-base font-extrabold text-emerald-900 font-heading">${occupiedRoomsCount} <span class="text-xs font-normal text-slate-400">/ ${vacantRoomsCount}</span></span>
+          </div>
+          <div class="bg-amber-50 border border-amber-200 p-2 rounded-xl text-center">
+            <span class="text-[10px] font-bold text-amber-800 uppercase block">Occupancy Rate</span>
+            <span class="text-base font-extrabold text-amber-900 font-heading">${occupancyRate}%</span>
+          </div>
+          <div class="bg-sky-50 border border-sky-200 p-2 rounded-xl text-center">
+            <span class="text-[10px] font-bold text-sky-800 uppercase block">Headcount Loaded</span>
+            <span class="text-base font-extrabold text-sky-900 font-heading">${totalAssignedHcCount} <span class="text-xs font-normal text-slate-400">${totalCapacityCount ? '/ ' + totalCapacityCount : 'HC'}</span></span>
+          </div>`;
+      }
+
+      const searchTerm = (document.getElementById('room-grid-search')?.value || '').toLowerCase().trim();
+      const filterHotel = document.getElementById('room-grid-filter-hotel')?.value || 'all';
+      const filterStatus = document.getElementById('room-grid-filter-status')?.value || 'all';
 
       const hotelGroup = {};
 
@@ -1849,40 +2320,76 @@
         const hotel = r.hotelName || 'Unspecified Hotel';
         const floor = r.floor || 'Unspecified Floor';
 
+        if (filterHotel !== 'all' && hotel !== filterHotel) return;
+
+        const occupants = attendees.filter(a => window.isAttendeeInRoom(a, r));
+        const totalOccupantsHc = occupants.reduce((sum, o) => sum + (parseInt(o.person) || 0), 0);
+        const cap = r.capacity ? parseInt(r.capacity) : null;
+
+        let statusKey = 'vacant';
+        if (totalOccupantsHc > 0) {
+          if (cap && totalOccupantsHc > cap) statusKey = 'overcapacity';
+          else statusKey = 'occupied';
+        }
+
+        if (filterStatus !== 'all' && statusKey !== filterStatus) return;
+
+        if (searchTerm) {
+          const roomMatch = r.roomNo.toLowerCase().includes(searchTerm) || hotel.toLowerCase().includes(searchTerm);
+          const occupantMatch = occupants.some(o => o.name && o.name.toLowerCase().includes(searchTerm));
+          if (!roomMatch && !occupantMatch) return;
+        }
+
         if (!hotelGroup[hotel]) hotelGroup[hotel] = {};
         if (!hotelGroup[hotel][floor]) hotelGroup[hotel][floor] = [];
 
-        let floorShort = '';
-        const fLower = floor.toLowerCase();
-        if (fLower.includes('ground') || fLower.includes('g')) floorShort = 'GF';
-        else if (fLower.includes('1st') || fLower.includes('1') || fLower.includes('i')) floorShort = '1F';
-        else if (fLower.includes('2nd') || fLower.includes('2') || fLower.includes('ii')) floorShort = '2F';
-        else if (fLower.includes('3rd') || fLower.includes('3') || fLower.includes('iii')) floorShort = '3F';
-        else floorShort = floor;
-
-        const roomKey = `${r.hotelName} ${r.roomNo}${floorShort ? ' (' + floorShort + ')' : ''}`;
-        const occupants = attendees.filter(a => a.room && (a.room === roomKey || a.room.includes(r.roomNo)));
-
         hotelGroup[hotel][floor].push({
           ...r,
-          roomKey,
-          occupants
+          occupants,
+          totalOccupantsHc,
+          statusKey
         });
       });
 
       let html = '';
       const hotels = Object.keys(hotelGroup).sort();
 
+      if (hotels.length === 0) {
+        gridContainer.innerHTML = `<div class="text-center text-slate-400 text-xs py-8 bg-slate-50 rounded-2xl border border-slate-200">
+          <i class="fa-solid fa-filter-circle-xmark text-2xl mb-1 block text-slate-300"></i> No rooms match current filters.
+        </div>`;
+        return;
+      }
+
       hotels.forEach(hotelName => {
+        let hotelTotalRooms = 0;
+        let hotelOccupiedRooms = 0;
+
+        Object.keys(hotelGroup[hotelName]).forEach(fl => {
+          const rms = hotelGroup[hotelName][fl];
+          hotelTotalRooms += rms.length;
+          hotelOccupiedRooms += rms.filter(rm => rm.totalOccupantsHc > 0).length;
+        });
+
+        const hotelOccPct = hotelTotalRooms > 0 ? Math.round((hotelOccupiedRooms / hotelTotalRooms) * 100) : 0;
+
         html += `
-          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-4 shadow-2xs">
-            <div class="flex items-center justify-between border-b border-slate-300 pb-2">
-              <h3 class="text-sm sm:text-base font-extrabold text-railway-900 font-heading flex items-center gap-2">
-                <i class="fa-solid fa-hotel text-purple-600"></i> ${hotelName}
-              </h3>
-              <span class="text-xs bg-purple-100 text-purple-800 font-extrabold px-2.5 py-0.5 rounded-full border border-purple-200">
-                Hotel Property
-              </span>
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 sm:p-4 space-y-4 shadow-2xs">
+            
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  <i class="fa-solid fa-hotel"></i>
+                </div>
+                <div>
+                  <h3 class="text-sm sm:text-base font-extrabold text-slate-900 font-heading leading-tight">${hotelName}</h3>
+                  <p class="text-[10px] text-slate-500">${hotelOccupiedRooms} of ${hotelTotalRooms} Rooms Occupied (${hotelOccPct}%)</p>
+                </div>
+              </div>
+
+              <div class="w-20 bg-slate-200 rounded-full h-2 overflow-hidden hidden sm:block">
+                <div class="bg-purple-600 h-2 rounded-full" style="width: ${hotelOccPct}%"></div>
+              </div>
             </div>`;
 
         const floors = Object.keys(hotelGroup[hotelName]).sort();
@@ -1892,49 +2399,67 @@
 
           html += `
             <div class="space-y-2">
-              <h4 class="text-xs font-extrabold text-slate-600 uppercase tracking-wider flex items-center gap-1.5 pl-1">
-                <i class="fa-solid fa-layer-group text-slate-400"></i> ${floorName} (${roomCards.length} Rooms)
-              </h4>
+              <div class="flex items-center justify-between text-xs font-extrabold text-slate-600 uppercase tracking-wider pl-1">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-layer-group text-purple-500"></i> ${floorName}</span>
+                <span class="text-[10px] text-slate-400 font-semibold lowercase">${roomCards.length} rooms</span>
+              </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">`;
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">`;
 
           roomCards.forEach(r => {
-            const totalOccupantsHc = r.occupants.reduce((sum, o) => sum + (parseInt(o.person) || 0), 0);
             const cap = r.capacity ? parseInt(r.capacity) : null;
-
             let badgeClass = "bg-slate-100 text-slate-600 border-slate-200";
             let statusText = "Vacant";
+            let headerBg = "bg-slate-100 border-slate-200";
 
-            if (totalOccupantsHc > 0) {
-              if (cap && totalOccupantsHc > cap) {
+            if (r.totalOccupantsHc > 0) {
+              if (cap && r.totalOccupantsHc > cap) {
                 badgeClass = "bg-rose-100 text-rose-800 border-rose-300";
-                statusText = `Overcapacity (${totalOccupantsHc}/${cap})`;
-              } else if (cap && totalOccupantsHc === cap) {
+                statusText = `Overcap (${r.totalOccupantsHc}/${cap})`;
+                headerBg = "bg-rose-50/80 border-rose-200";
+              } else if (cap && r.totalOccupantsHc === cap) {
                 badgeClass = "bg-amber-100 text-amber-800 border-amber-300";
-                statusText = `Full (${totalOccupantsHc}/${cap})`;
+                statusText = `Full (${r.totalOccupantsHc}/${cap})`;
+                headerBg = "bg-amber-50/80 border-amber-200";
               } else {
                 badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-300";
-                statusText = `Occupied (${totalOccupantsHc}${cap ? '/' + cap : ''})`;
+                statusText = `Occupied (${r.totalOccupantsHc}${cap ? '/' + cap : ''})`;
+                headerBg = "bg-emerald-50/80 border-emerald-200";
               }
             }
 
             let occupantsHtml = '';
             if (r.occupants.length === 0) {
-              occupantsHtml = `<div class="text-[11px] text-slate-400 italic py-1">No occupants assigned yet</div>`;
+              occupantsHtml = `
+                <div class="text-[11px] text-slate-400 italic py-3 text-center border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                  <i class="fa-solid fa-bed text-slate-300 block text-base mb-0.5"></i> Room is currently vacant
+                </div>`;
             } else {
-              occupantsHtml = `<ul class="space-y-1">`;
+              occupantsHtml = `<ul class="space-y-1.5">`;
               r.occupants.forEach(occ => {
                 const veg = occ.vegCount !== undefined ? occ.vegCount : occ.person;
                 const nonVeg = occ.nonVegCount || 0;
+                const initials = (occ.name || 'O').split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+
                 occupantsHtml += `
-                  <li class="bg-white border border-slate-200 p-2 rounded-lg text-xs flex items-center justify-between shadow-2xs">
-                    <div>
-                      <div class="font-bold text-slate-900">${occ.name}</div>
-                      <div class="text-[10px] text-slate-500">${occ.set || 'Set 1'} • ${occ.person} Headcount</div>
+                  <li class="bg-white border border-slate-200 p-2 rounded-xl text-xs flex items-center justify-between shadow-2xs">
+                    <div class="flex items-center gap-2 min-w-0 pr-1">
+                      <div class="w-6 h-6 rounded-full bg-slate-800 text-amber-400 font-extrabold text-[10px] flex items-center justify-center shrink-0">
+                        ${initials}
+                      </div>
+                      <div class="min-w-0">
+                        <div class="font-bold text-slate-900 truncate leading-tight">${occ.name}</div>
+                        <div class="text-[10px] text-slate-500 font-medium">${occ.set || 'Set 1'} • <strong class="text-slate-800">${occ.person} HC</strong></div>
+                      </div>
                     </div>
-                    <div class="flex items-center gap-1 text-[10px]">
-                      <span class="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-semibold border border-emerald-200"><i class="fa-solid fa-leaf text-[9px]"></i> ${veg}</span>
-                      ${nonVeg > 0 ? `<span class="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded font-semibold border border-rose-200"><i class="fa-solid fa-drumstick-bite text-[9px]"></i> ${nonVeg}</span>` : ''}
+                    <div class="flex items-center gap-1 text-[10px] shrink-0">
+                      <span class="bg-emerald-50 text-emerald-700 px-1 py-0.5 rounded font-bold border border-emerald-200"><i class="fa-solid fa-leaf text-[9px]"></i> ${veg}</span>
+                      ${nonVeg > 0 ? `<span class="bg-rose-50 text-rose-700 px-1 py-0.5 rounded font-bold border border-rose-200"><i class="fa-solid fa-drumstick-bite text-[9px]"></i> ${nonVeg}</span>` : ''}
+                      ${window.isAdminMode ? `
+                        <button onclick="openRoomPicker('${occ.id}')" title="Change Room" class="no-print p-1 text-slate-400 hover:text-amber-600 transition cursor-pointer ml-0.5">
+                          <i class="fa-solid fa-right-left"></i>
+                        </button>
+                      ` : ''}
                     </div>
                   </li>`;
               });
@@ -1942,20 +2467,25 @@
             }
 
             html += `
-              <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-xs space-y-2 flex flex-col justify-between">
-                <div class="space-y-1.5">
-                  <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+              <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs flex flex-col justify-between transition hover:shadow-md">
+                <div>
+                  <div class="p-2.5 ${headerBg} border-b flex items-center justify-between">
                     <div>
-                      <span class="text-xs font-mono font-extrabold text-amber-700 block">Room ${r.roomNo}</span>
-                      <span class="text-[10px] text-slate-400">${r.beds ? r.beds + ' Beds' : 'Beds: N/A'}</span>
+                      <span class="text-xs font-mono font-black text-slate-900 block flex items-center gap-1">
+                        <i class="fa-solid fa-door-closed text-purple-600"></i> Room ${r.roomNo}
+                      </span>
+                      <span class="text-[10px] font-medium text-slate-500">${r.beds ? r.beds + ' Beds' : 'Standard'} ${r.capacity ? '• Max ' + r.capacity + ' HC' : ''}</span>
                     </div>
-                    <span class="text-[10px] font-extrabold px-2 py-0.5 rounded border ${badgeClass} whitespace-nowrap">
+                    <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${badgeClass} whitespace-nowrap">
                       ${statusText}
                     </span>
                   </div>
 
-                  <div class="pt-0.5">
-                    <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Occupants (${totalOccupantsHc} Persons)</div>
+                  <div class="p-2.5 space-y-1.5">
+                    <div class="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400">
+                      <span>Occupants (${r.occupants.length} Families)</span>
+                      <span>${r.totalOccupantsHc} HC</span>
+                    </div>
                     ${occupantsHtml}
                   </div>
                 </div>
@@ -1971,352 +2501,16 @@
       gridContainer.innerHTML = html;
     }
 
-    window.openAddModal = function() {
-      document.getElementById('modal-title').innerText = "Add Family Details";
-      document.getElementById('form-id').value = "";
-      document.getElementById('form-name').value = "";
-      document.getElementById('form-set').value = "Set 1";
-      document.getElementById('form-person').value = "2";
-      document.getElementById('form-veg').value = "2";
-      document.getElementById('form-nonveg').value = "0";
-      document.getElementById('form-room').value = "";
-      document.getElementById('form-giftbag').value = "1";
-      document.getElementById('form-photocop').value = "1";
-      const delBtn = document.getElementById('btn-modal-delete-attendee');
-      if (delBtn) delBtn.classList.add('hidden');
-      document.getElementById('modal-attendee').classList.remove('hidden');
-    };
-
-    window.openEditModal = function(id) {
-      const item = (window.attendeesList || []).find(a => a.id === id);
-      if (!item) return;
-      document.getElementById('modal-title').innerText = "Edit Family Details";
-      document.getElementById('form-id').value = item.id;
-      document.getElementById('form-name').value = item.name || "";
-      document.getElementById('form-set').value = item.set || "";
-      document.getElementById('form-person').value = item.person || 1;
-      document.getElementById('form-veg').value = item.vegCount !== undefined ? item.vegCount : (item.person || 1);
-      document.getElementById('form-nonveg').value = item.nonVegCount || 0;
-      
-      window.populateRoomDropdown();
-      document.getElementById('form-room').value = item.room || "";
-      document.getElementById('form-giftbag').value = item.giftBag !== undefined ? item.giftBag : 1;
-      document.getElementById('form-photocop').value = item.photoCop !== undefined ? item.photoCop : 1;
-      const delBtn = document.getElementById('btn-modal-delete-attendee');
-      if (delBtn) delBtn.classList.remove('hidden');
-      document.getElementById('modal-attendee').classList.remove('hidden');
-    };
-
-    window.deleteFromAttendeeModal = function() {
-      const id = document.getElementById('form-id').value;
-      if (!id) return;
-      closeAttendeeModal();
-      openDeleteModal('attendee', id);
-    };
-
-    window.closeAttendeeModal = function() {
-      document.getElementById('modal-attendee').classList.add('hidden');
-    };
-
-    window.autoAdjustFoodCounts = function() {
-      const headcount = parseInt(document.getElementById('form-person').value) || 1;
-      document.getElementById('form-veg').value = headcount;
-      document.getElementById('form-nonveg').value = 0;
-    };
-
-    window.saveAttendeeForm = async function(e) {
-      e.preventDefault();
-      const id = document.getElementById('form-id').value;
-      const name = document.getElementById('form-name').value.trim();
-      if (!name) return;
-
-      const headcount = parseInt(document.getElementById('form-person').value) || 1;
-      const vegCount = parseInt(document.getElementById('form-veg').value);
-      const nonVegCount = parseInt(document.getElementById('form-nonveg').value);
-
-      const existingItem = (window.attendeesList || []).find(a => a.id === id);
-
-      const attendeeData = {
-        id: id || ('att_' + Date.now()),
-        name: name,
-        set: document.getElementById('form-set').value.trim() || 'Set 1',
-        person: headcount,
-        vegCount: isNaN(vegCount) ? headcount : vegCount,
-        nonVegCount: isNaN(nonVegCount) ? 0 : nonVegCount,
-        room: document.getElementById('form-room').value || '',
-        giftBag: parseInt(document.getElementById('form-giftbag').value) || 0,
-        photoCop: parseInt(document.getElementById('form-photocop').value) || 0,
-        giftIssued: existingItem ? (existingItem.giftIssued || false) : false,
-        photoIssued: existingItem ? (existingItem.photoIssued || false) : false,
-        order: existingItem && typeof existingItem.order === 'number' ? existingItem.order : (window.attendeesList || []).length
-      };
-
-      const list = window.attendeesList || [];
-      const idx = list.findIndex(a => a.id === attendeeData.id);
-      if (idx >= 0) {
-        list[idx] = attendeeData;
-      } else {
-        list.push(attendeeData);
-      }
-
-      window.renderAllViews();
-      closeAttendeeModal();
-
-      if (window.dbOps && window.dbOps.saveAttendee) {
-        await window.dbOps.saveAttendee(attendeeData);
-      }
-    };
-
-    window.openAddRoomModal = function() {
-      if (!window.isSuperAdmin) return;
-      document.getElementById('modal-room-title').innerText = "Add Room Master";
-      document.getElementById('form-room-id').value = "";
-      document.getElementById('form-hotel-name').value = "";
-      document.getElementById('form-room-number').value = "";
-      document.getElementById('form-room-floor').value = "";
-      document.getElementById('form-room-beds').value = "";
-      document.getElementById('form-room-capacity').value = "";
-      document.getElementById('modal-room').classList.remove('hidden');
-    };
-
-    window.openEditRoomModal = function(id) {
-      if (!window.isSuperAdmin) return;
-      const room = (window.roomsList || []).find(r => r.id === id);
-      if (!room) return;
-      document.getElementById('modal-room-title').innerText = "Edit Room Master";
-      document.getElementById('form-room-id').value = room.id;
-      document.getElementById('form-hotel-name').value = room.hotelName || "";
-      document.getElementById('form-room-number').value = room.roomNo || "";
-      document.getElementById('form-room-floor').value = room.floor || "";
-      document.getElementById('form-room-beds').value = room.beds || "";
-      document.getElementById('form-room-capacity').value = room.capacity || "";
-      document.getElementById('modal-room').classList.remove('hidden');
-    };
-
-    window.duplicateRoomRecord = function(id) {
-      if (!window.isSuperAdmin) return;
-      const room = (window.roomsList || []).find(r => r.id === id);
-      if (!room) return;
-
-      document.getElementById('modal-room-title').innerText = "Duplicate Room Master";
-      document.getElementById('form-room-id').value = "";
-      document.getElementById('form-hotel-name').value = room.hotelName || '';
-      document.getElementById('form-room-number').value = room.roomNo ? (room.roomNo + ' (Copy)') : '';
-      document.getElementById('form-room-floor').value = room.floor || '';
-      document.getElementById('form-room-beds').value = room.beds || '';
-      document.getElementById('form-room-capacity').value = room.capacity || '';
-      document.getElementById('modal-room').classList.remove('hidden');
-    };
-
-    window.closeRoomModal = function() {
-      document.getElementById('modal-room').classList.add('hidden');
-    };
-
-    window.saveRoomMasterForm = async function(e) {
-      e.preventDefault();
-      if (!window.isSuperAdmin) return;
-
-      const id = document.getElementById('form-room-id').value;
-      const hotelName = document.getElementById('form-hotel-name').value.trim();
-      const roomNo = document.getElementById('form-room-number').value.trim();
-
-      if (!hotelName || !roomNo) return;
-
-      const roomData = {
-        id: id || ('rm_' + Date.now()),
-        hotelName: hotelName,
-        roomNo: roomNo,
-        floor: document.getElementById('form-room-floor').value || '',
-        beds: document.getElementById('form-room-beds').value ? parseInt(document.getElementById('form-room-beds').value) : '',
-        capacity: document.getElementById('form-room-capacity').value ? parseInt(document.getElementById('form-room-capacity').value) : ''
-      };
-
-      const rooms = window.roomsList || [];
-      const idx = rooms.findIndex(r => r.id === roomData.id);
-      if (idx >= 0) {
-        rooms[idx] = roomData;
-      } else {
-        rooms.push(roomData);
-      }
-
-      window.renderAllViews();
-      closeRoomModal();
-
-      if (window.dbOps && window.dbOps.saveRoom) {
-        await window.dbOps.saveRoom(roomData);
-      }
-    };
-
-    window.openDeleteModal = function(type, id) {
-      let name = "this record";
-      if (type === 'attendee') {
-        const item = (window.attendeesList || []).find(a => a.id === id);
-        if (item) name = item.name;
-      } else if (type === 'room') {
-        if (!window.isSuperAdmin) return;
-        const room = (window.roomsList || []).find(r => r.id === id);
-        if (room) name = `${room.hotelName} Room ${room.roomNo}`;
-      }
-
-      pendingDeleteTarget = { type, id };
-      document.getElementById('delete-record-name').innerText = name;
-      document.getElementById('modal-delete').classList.remove('hidden');
-    };
-
-    window.closeDeleteModal = function() {
-      pendingDeleteTarget = null;
-      document.getElementById('modal-delete').classList.add('hidden');
-    };
-
-    window.confirmDeleteRecord = async function() {
-      if (!pendingDeleteTarget) return;
-
-      const { type, id } = pendingDeleteTarget;
-
-      if (type === 'attendee') {
-        window.attendeesList = (window.attendeesList || []).filter(a => a.id !== id);
-        window.renderAllViews();
-        closeDeleteModal();
-        if (window.dbOps && window.dbOps.deleteAttendee) {
-          await window.dbOps.deleteAttendee(id);
-        }
-      } else if (type === 'room' && window.isSuperAdmin) {
-        window.roomsList = (window.roomsList || []).filter(r => r.id !== id);
-        window.renderAllViews();
-        closeDeleteModal();
-        if (window.dbOps && window.dbOps.deleteRoom) {
-          await window.dbOps.deleteRoom(id);
-        }
-      }
-    };
-
-    window.openAdminModal = function() {
-      if (window.isAdminMode) {
-        window.userRole = 'guest';
-        window.isAdminMode = false;
-        window.isSuperAdmin = false;
-        updateAdminVisibility();
-        switchView('directory');
-        return;
-      }
-      const pinInput = document.getElementById('admin-pin-input');
-      if (pinInput) pinInput.value = "";
-      document.getElementById('admin-pin-error').classList.add('hidden');
-      document.getElementById('modal-admin-pin').classList.remove('hidden');
-      if (pinInput) setTimeout(() => pinInput.focus(), 100);
-    };
-
-    window.closeAdminModal = function() {
-      document.getElementById('modal-admin-pin').classList.add('hidden');
-    };
-
-    window.handlePinInput = function(inputEl) {
-      const val = inputEl.value.trim();
-      const errEl = document.getElementById('admin-pin-error');
-
-      if (val.length < 4) {
-        if (errEl) errEl.classList.add('hidden');
-        return;
-      }
-
-      if (val.length === 4) {
-        if (val === '6677') {
-          window.userRole = 'admin';
-          window.isAdminMode = true;
-          window.isSuperAdmin = false;
-          inputEl.blur();
-          closeAdminModal();
-          updateAdminVisibility();
-        } else if (val === '6789') {
-          window.userRole = 'superadmin';
-          window.isAdminMode = true;
-          window.isSuperAdmin = true;
-          inputEl.blur();
-          closeAdminModal();
-          updateAdminVisibility();
-        } else {
-          if (errEl) {
-            errEl.innerText = "Incorrect PIN!";
-            errEl.classList.remove('hidden');
-          }
-        }
-      }
-    };
-
-    window.submitAdminPin = function() {
-      const pinInput = document.getElementById('admin-pin-input');
-      if (pinInput) window.handlePinInput(pinInput);
-    };
-
-    function updateAdminVisibility() {
-      const btnText = document.getElementById('admin-status-text');
-      const lockIcon = document.getElementById('admin-lock-icon');
-      const dbText = document.getElementById('db-status-text');
-      
-      if (window.isSuperAdmin) {
-        if (btnText) { btnText.innerText = "SUPER ADMIN"; btnText.classList.remove('hidden'); }
-        if (lockIcon) lockIcon.className = "fa-solid fa-crown text-amber-400";
-        if (dbText) dbText.classList.add('hidden');
-        document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
-        document.querySelectorAll('.superadmin-only').forEach(el => el.classList.remove('hidden'));
-      } else if (window.isAdminMode) {
-        if (btnText) { btnText.innerText = "ADMIN"; btnText.classList.remove('hidden'); }
-        if (lockIcon) lockIcon.className = "fa-solid fa-unlock text-emerald-400";
-        if (dbText) dbText.classList.add('hidden');
-        document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
-        document.querySelectorAll('.superadmin-only').forEach(el => el.classList.add('hidden'));
-      } else {
-        if (btnText) { btnText.innerText = ""; btnText.classList.add('hidden'); }
-        if (lockIcon) lockIcon.className = "fa-solid fa-key text-amber-400";
-        if (dbText) dbText.classList.remove('hidden');
-        document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
-        document.querySelectorAll('.superadmin-only').forEach(el => el.classList.add('hidden'));
-      }
-
-      renderTable();
-    }
-
-    window.changeFontSize = function(size) {
-      const btnN = document.getElementById('btn-font-normal');
-      const btnL = document.getElementById('btn-font-large');
-
-      if (size === 'large') {
-        document.documentElement.style.fontSize = '18.5px';
-        if (btnL) {
-          btnL.classList.add('bg-slate-700', 'text-white');
-          btnL.classList.remove('text-slate-300');
-        }
-        if (btnN) {
-          btnN.classList.remove('bg-slate-700', 'text-white');
-          btnN.classList.add('text-slate-300');
-        }
-      } else {
-        document.documentElement.style.fontSize = '16px';
-        if (btnN) {
-          btnN.classList.add('bg-slate-700', 'text-white');
-          btnN.classList.remove('text-slate-300');
-        }
-        if (btnL) {
-          btnL.classList.remove('bg-slate-700', 'text-white');
-          btnL.classList.add('text-slate-300');
-        }
-      }
-    };
-
-    window.filterAttendees = function() {
-      renderTable();
-    };
-
     window.exportPDF = function() {
       const element = document.getElementById('printable-area');
       if (!element) return;
 
       const opt = {
-        margin:       0.3,
+        margin:       [0.3, 0.3, 0.3, 0.3],
         filename:     'RPF_Kodaikanal_GetTogether_2026.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
 
       if (window.html2pdf) {
@@ -2414,7 +2608,7 @@
     window.onload = function() {
       startCountdown();
       setupTableScrollSync();
-      renderAllViews();
+      window.renderAllViews();
     };
   </script>
 </body>
