@@ -492,7 +492,7 @@
         </div>
 
         <!-- Occupancy Bar KPI Summary -->
-        <div id="room-grid-kpi" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+        <div id="room-grid-kpi" class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
           <!-- Dynamically populated via JS -->
         </div>
 
@@ -2278,6 +2278,13 @@
       let occupiedRoomsCount = 0;
       let totalCapacityCount = 0;
       let totalAssignedHcCount = 0;
+      let unassignedHcCount = 0;
+
+      attendees.forEach(a => {
+        if (!a.room || !a.room.trim()) {
+          unassignedHcCount += (parseInt(a.person) || 0);
+        }
+      });
 
       rooms.forEach(r => {
         const occs = attendees.filter(a => window.isAttendeeInRoom(a, r));
@@ -2287,26 +2294,19 @@
         if (r.capacity) totalCapacityCount += parseInt(r.capacity);
       });
 
-      const vacantRoomsCount = totalRoomsCount - occupiedRoomsCount;
-      const occupancyRate = totalRoomsCount > 0 ? Math.round((occupiedRoomsCount / totalRoomsCount) * 100) : 0;
-
       if (kpiContainer) {
         kpiContainer.innerHTML = `
           <div class="bg-purple-50 border border-purple-200 p-2 rounded-xl text-center">
             <span class="text-[10px] font-bold text-purple-700 uppercase block">Total Rooms</span>
             <span class="text-base font-extrabold text-purple-900 font-heading">${totalRoomsCount}</span>
           </div>
-          <div class="bg-emerald-50 border border-emerald-200 p-2 rounded-xl text-center">
-            <span class="text-[10px] font-bold text-emerald-700 uppercase block">Occupied / Vacant</span>
-            <span class="text-base font-extrabold text-emerald-900 font-heading">${occupiedRoomsCount} <span class="text-xs font-normal text-slate-400">/ ${vacantRoomsCount}</span></span>
+          <div class="bg-sky-50 border border-sky-200 p-2 rounded-xl text-center">
+            <span class="text-[10px] font-bold text-sky-800 uppercase block">Headcount Assigned</span>
+            <span class="text-base font-extrabold text-sky-900 font-heading">${totalAssignedHcCount} <span class="text-xs font-normal text-slate-400">${totalCapacityCount ? '/ ' + totalCapacityCount : 'HC'}</span></span>
           </div>
           <div class="bg-amber-50 border border-amber-200 p-2 rounded-xl text-center">
-            <span class="text-[10px] font-bold text-amber-800 uppercase block">Occupancy Rate</span>
-            <span class="text-base font-extrabold text-amber-900 font-heading">${occupancyRate}%</span>
-          </div>
-          <div class="bg-sky-50 border border-sky-200 p-2 rounded-xl text-center">
-            <span class="text-[10px] font-bold text-sky-800 uppercase block">Headcount Loaded</span>
-            <span class="text-base font-extrabold text-sky-900 font-heading">${totalAssignedHcCount} <span class="text-xs font-normal text-slate-400">${totalCapacityCount ? '/ ' + totalCapacityCount : 'HC'}</span></span>
+            <span class="text-[10px] font-bold text-amber-800 uppercase block">Headcount Not Yet Assigned</span>
+            <span class="text-base font-extrabold text-amber-900 font-heading">${unassignedHcCount} HC</span>
           </div>`;
       }
 
@@ -2374,11 +2374,11 @@
         const hotelOccPct = hotelTotalRooms > 0 ? Math.round((hotelOccupiedRooms / hotelTotalRooms) * 100) : 0;
 
         html += `
-          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 sm:p-4 space-y-4 shadow-2xs">
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 sm:p-4 space-y-3 shadow-2xs">
             
             <div class="flex items-center justify-between border-b border-slate-200 pb-2">
               <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                <div class="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
                   <i class="fa-solid fa-hotel"></i>
                 </div>
                 <div>
@@ -2398,101 +2398,97 @@
           const roomCards = hotelGroup[hotelName][floorName];
 
           html += `
-            <div class="space-y-2">
+            <div class="space-y-1.5">
               <div class="flex items-center justify-between text-xs font-extrabold text-slate-600 uppercase tracking-wider pl-1">
                 <span class="flex items-center gap-1.5"><i class="fa-solid fa-layer-group text-purple-500"></i> ${floorName}</span>
                 <span class="text-[10px] text-slate-400 font-semibold lowercase">${roomCards.length} rooms</span>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">`;
+              <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
+                <div class="table-container overflow-x-auto">
+                  <table class="w-full text-left border-collapse min-w-[500px]">
+                    <thead>
+                      <tr class="bg-slate-100 text-slate-700 uppercase text-[10px] font-extrabold tracking-wider border-b border-slate-200">
+                        <th class="py-1.5 px-2.5 w-24">Room</th>
+                        <th class="py-1.5 px-2 text-center w-24">Status</th>
+                        <th class="py-1.5 px-2.5">Occupant Families & Food</th>
+                        <th class="py-1.5 px-2 text-center w-16">HC</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-xs font-medium">`;
 
           roomCards.forEach(r => {
             const cap = r.capacity ? parseInt(r.capacity) : null;
             let badgeClass = "bg-slate-100 text-slate-600 border-slate-200";
             let statusText = "Vacant";
-            let headerBg = "bg-slate-100 border-slate-200";
 
             if (r.totalOccupantsHc > 0) {
               if (cap && r.totalOccupantsHc > cap) {
                 badgeClass = "bg-rose-100 text-rose-800 border-rose-300";
-                statusText = `Overcap (${r.totalOccupantsHc}/${cap})`;
-                headerBg = "bg-rose-50/80 border-rose-200";
+                statusText = `Overcap`;
               } else if (cap && r.totalOccupantsHc === cap) {
                 badgeClass = "bg-amber-100 text-amber-800 border-amber-300";
-                statusText = `Full (${r.totalOccupantsHc}/${cap})`;
-                headerBg = "bg-amber-50/80 border-amber-200";
+                statusText = `Full`;
               } else {
                 badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-300";
-                statusText = `Occupied (${r.totalOccupantsHc}${cap ? '/' + cap : ''})`;
-                headerBg = "bg-emerald-50/80 border-emerald-200";
+                statusText = `Occupied`;
               }
             }
 
             let occupantsHtml = '';
             if (r.occupants.length === 0) {
-              occupantsHtml = `
-                <div class="text-[11px] text-slate-400 italic py-3 text-center border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-                  <i class="fa-solid fa-bed text-slate-300 block text-base mb-0.5"></i> Room is currently vacant
-                </div>`;
+              occupantsHtml = `<span class="text-slate-400 italic text-[11px]">— Vacant —</span>`;
             } else {
-              occupantsHtml = `<ul class="space-y-1.5">`;
+              occupantsHtml = `<div class="flex flex-wrap items-center gap-1 py-0.5">`;
               r.occupants.forEach(occ => {
                 const veg = occ.vegCount !== undefined ? occ.vegCount : occ.person;
                 const nonVeg = occ.nonVegCount || 0;
-                const initials = (occ.name || 'O').split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
 
                 occupantsHtml += `
-                  <li class="bg-white border border-slate-200 p-2 rounded-xl text-xs flex items-center justify-between shadow-2xs">
-                    <div class="flex items-center gap-2 min-w-0 pr-1">
-                      <div class="w-6 h-6 rounded-full bg-slate-800 text-amber-400 font-extrabold text-[10px] flex items-center justify-center shrink-0">
-                        ${initials}
-                      </div>
-                      <div class="min-w-0">
-                        <div class="font-bold text-slate-900 truncate leading-tight">${occ.name}</div>
-                        <div class="text-[10px] text-slate-500 font-medium">${occ.set || 'Set 1'} • <strong class="text-slate-800">${occ.person} HC</strong></div>
-                      </div>
-                    </div>
-                    <div class="flex items-center gap-1 text-[10px] shrink-0">
-                      <span class="bg-emerald-50 text-emerald-700 px-1 py-0.5 rounded font-bold border border-emerald-200"><i class="fa-solid fa-leaf text-[9px]"></i> ${veg}</span>
-                      ${nonVeg > 0 ? `<span class="bg-rose-50 text-rose-700 px-1 py-0.5 rounded font-bold border border-rose-200"><i class="fa-solid fa-drumstick-bite text-[9px]"></i> ${nonVeg}</span>` : ''}
-                      ${window.isAdminMode ? `
-                        <button onclick="openRoomPicker('${occ.id}')" title="Change Room" class="no-print p-1 text-slate-400 hover:text-amber-600 transition cursor-pointer ml-0.5">
-                          <i class="fa-solid fa-right-left"></i>
-                        </button>
-                      ` : ''}
-                    </div>
-                  </li>`;
+                  <div class="inline-flex items-center gap-1 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-lg text-xs shadow-2xs">
+                    <span class="font-bold text-slate-900">${occ.name}</span>
+                    <span class="text-[10px] text-slate-500">(${occ.set || 'Set 1'})</span>
+                    <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200"><i class="fa-solid fa-leaf text-[8px]"></i> ${veg}</span>
+                    ${nonVeg > 0 ? `<span class="text-[10px] font-bold text-rose-700 bg-rose-50 px-1 py-0.2 rounded border border-rose-200"><i class="fa-solid fa-drumstick-bite text-[8px]"></i> ${nonVeg}</span>` : ''}
+                    ${window.isAdminMode ? `
+                      <button onclick="openRoomPicker('${occ.id}')" title="Change Room" class="no-print p-0.5 text-slate-400 hover:text-amber-600 transition cursor-pointer ml-0.5">
+                        <i class="fa-solid fa-right-left text-[10px]"></i>
+                      </button>
+                    ` : ''}
+                  </div>`;
               });
-              occupantsHtml += `</ul>`;
+              occupantsHtml += `</div>`;
             }
 
             html += `
-              <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs flex flex-col justify-between transition hover:shadow-md">
-                <div>
-                  <div class="p-2.5 ${headerBg} border-b flex items-center justify-between">
-                    <div>
-                      <span class="text-xs font-mono font-black text-slate-900 block flex items-center gap-1">
-                        <i class="fa-solid fa-door-closed text-purple-600"></i> Room ${r.roomNo}
-                      </span>
-                      <span class="text-[10px] font-medium text-slate-500">${r.beds ? r.beds + ' Beds' : 'Standard'} ${r.capacity ? '• Max ' + r.capacity + ' HC' : ''}</span>
-                    </div>
-                    <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${badgeClass} whitespace-nowrap">
-                      ${statusText}
-                    </span>
+              <tr class="hover:bg-slate-50/80 transition">
+                <td class="py-1.5 px-2.5 font-mono font-bold text-slate-900 whitespace-nowrap">
+                  <div class="flex items-center gap-1">
+                    <i class="fa-solid fa-door-closed text-purple-600 text-[11px]"></i>
+                    <span>Room ${r.roomNo}</span>
                   </div>
-
-                  <div class="p-2.5 space-y-1.5">
-                    <div class="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400">
-                      <span>Occupants (${r.occupants.length} Families)</span>
-                      <span>${r.totalOccupantsHc} HC</span>
-                    </div>
-                    ${occupantsHtml}
-                  </div>
-                </div>
-              </div>`;
+                  <span class="text-[10px] font-normal text-slate-400 block">${r.beds ? r.beds + ' Beds' : ''}${r.capacity ? ' (Max ' + r.capacity + ')' : ''}</span>
+                </td>
+                <td class="py-1.5 px-2 text-center whitespace-nowrap">
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${badgeClass}">
+                    ${statusText}
+                  </span>
+                </td>
+                <td class="py-1.5 px-2.5">
+                  ${occupantsHtml}
+                </td>
+                <td class="py-1.5 px-2 text-center font-mono font-bold text-slate-800 whitespace-nowrap">
+                  ${r.totalOccupantsHc}${cap ? '<span class="text-slate-400 font-normal">/' + cap + '</span>' : ''}
+                </td>
+              </tr>`;
           });
 
-          html += `</div></div>`;
+          html += `
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>`;
         });
 
         html += `</div>`;
