@@ -174,7 +174,7 @@
 
         <!-- Application Auto-Incremented Version Badge -->
         <span class="bg-slate-800/90 border border-slate-700 text-amber-400 text-[10px] sm:text-xs font-mono font-bold px-2 py-1 rounded-lg shadow-2xs" title="Application Version">
-          v1.0.8
+          v1.0.9
         </span>
 
         <!-- Export Buttons -->
@@ -536,6 +536,7 @@
 
   </main>
 
+  <!-- Drag-and-drop indicator notification pill -->
   <div id="drag-indicator" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/95 text-amber-300 text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl border border-amber-500/60 flex items-center gap-2 z-50 hidden pointer-events-none transition-opacity">
     <i class="fa-solid fa-arrows-up-down text-amber-400 animate-bounce"></i>
     <span>Reordering Row... Drag to target & release</span>
@@ -700,7 +701,7 @@
     </div>
   </div>
 
-  <!-- MODAL: SECURITY ADMIN PIN UNLOCK -->
+  <!-- MODAL: SECURITY ADMIN PIN UNLOCK (Configured for numeric-only phone keypad) -->
   <div id="modal-admin-pin" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 z-50 hidden">
     <div class="bg-white w-full max-w-xs rounded-2xl shadow-xl border border-slate-200 p-5 text-center space-y-4">
       <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto text-amber-600 text-xl">
@@ -713,7 +714,7 @@
       </div>
 
       <div class="space-y-2">
-        <input type="password" id="admin-pin-input" maxlength="4" placeholder="••••" class="w-32 text-center text-2xl font-mono tracking-widest px-3 py-2 border-2 border-slate-300 focus:border-amber-500 rounded-xl outline-none mx-auto block">
+        <input type="password" id="admin-pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" class="w-32 text-center text-2xl font-mono tracking-widest px-3 py-2 border-2 border-slate-300 focus:border-amber-500 rounded-xl outline-none mx-auto block">
         <p id="admin-pin-error" class="text-xs text-rose-600 font-bold hidden"><i class="fa-solid fa-circle-exclamation"></i> Incorrect PIN!</p>
       </div>
 
@@ -1553,8 +1554,8 @@
         const dist = Math.hypot(moveX - startX, moveY - startY);
 
         if (!isDraggingRow) {
-          // Micro-movement jitter tolerance (25px) on touch devices before canceling timer
-          if (dist > 25) {
+          // Jitter tolerance threshold before canceling timer
+          if (dist > 20) {
             if (pressTimer) clearTimeout(pressTimer);
             pressTimer = null;
             dragSourceId = null;
@@ -1636,7 +1637,6 @@
     }
 
     async function reorderAttendeeRows(sourceId, targetId) {
-      ensureOrderIndexes();
       const list = window.attendeesList || [];
       const sourceIdx = list.findIndex(a => a.id === sourceId);
       const targetIdx = list.findIndex(a => a.id === targetId);
@@ -1653,8 +1653,12 @@
       const [draggedItem] = list.splice(sourceIdx, 1);
       list.splice(targetIdx, 0, draggedItem);
 
-      ensureOrderIndexes();
-      renderTable();
+      // Dynamically assign sequential order indices
+      list.forEach((item, idx) => {
+        item.order = idx;
+      });
+
+      renderAllViews();
 
       if (window.dbOps && window.dbOps.saveAttendee) {
         await Promise.all(list.map(item => window.dbOps.saveAttendee(item)));
