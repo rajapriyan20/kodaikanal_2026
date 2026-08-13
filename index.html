@@ -46,6 +46,7 @@
     html {
       transition: font-size 0.2s ease;
       font-size: 16px;
+      scroll-behavior: smooth;
     }
     body {
       background-color: #f8fafc;
@@ -159,7 +160,7 @@
         </button>
       </div>
 
-      <!-- Right: Senior Font Sizer, Version Badge, Admin Lock & Export Buttons Stacked Below -->
+      <!-- Right: Senior Font Sizer, Version Badge, Icon-only Export Buttons adjacent to Admin Lock -->
       <div class="flex items-center gap-1.5 sm:gap-2">
         <!-- Senior Friendly Font Sizer -->
         <div class="bg-slate-800 border border-slate-700 rounded-lg p-0.5 flex items-center text-xs font-bold text-slate-300">
@@ -169,28 +170,26 @@
 
         <!-- Application Auto-Incremented Version Badge -->
         <span class="bg-slate-800/90 border border-slate-700 text-amber-400 text-[10px] sm:text-xs font-mono font-bold px-2 py-1 rounded-lg shadow-2xs" title="Application Version">
-          v1.1.0
+          v1.1.3
         </span>
 
-        <!-- Admin Lock & Export Container (Stacked below in Admin Mode) -->
-        <div class="flex flex-col items-end gap-1">
-          <button id="admin-toggle-btn" onclick="openAdminModal()" title="Admin PIN Unlock" class="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition cursor-pointer">
+        <!-- Admin Lock & Export Buttons (Horizontally Adjacent) -->
+        <div class="flex items-center gap-1">
+          <!-- Export Buttons (Admin only, adjacent to Admin button - ICON ONLY) -->
+          <div class="admin-only hidden flex items-center gap-1">
+            <button onclick="exportPDF()" title="Download PDF Report" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition cursor-pointer">
+              <i class="fa-solid fa-file-pdf text-rose-400"></i>
+            </button>
+            
+            <button onclick="exportCSV()" title="Export CSV Data" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition cursor-pointer">
+              <i class="fa-solid fa-file-excel text-emerald-400"></i>
+            </button>
+          </div>
+
+          <button id="admin-toggle-btn" onclick="openAdminModal()" title="Admin PIN Unlock" class="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 px-2.5 py-1 h-7 rounded-lg text-xs font-bold flex items-center gap-1 transition cursor-pointer">
             <i id="admin-lock-icon" class="fa-solid fa-key text-amber-400"></i>
             <span id="admin-status-text" class="hidden text-[11px] font-mono"></span>
           </button>
-
-          <!-- Export Buttons (Admin only, shown below Admin badge) -->
-          <div class="admin-only hidden flex items-center gap-1">
-            <button onclick="exportPDF()" title="Download PDF Report" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
-              <i class="fa-solid fa-file-pdf text-rose-400"></i>
-              <span>PDF</span>
-            </button>
-            
-            <button onclick="exportCSV()" title="Export CSV Data" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
-              <i class="fa-solid fa-file-excel text-emerald-400"></i>
-              <span>CSV</span>
-            </button>
-          </div>
         </div>
       </div>
 
@@ -380,17 +379,17 @@
       </div>
 
       <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
-        <div class="table-container overflow-x-auto min-h-[450px] max-h-[80vh] sm:max-h-[85vh] overflow-y-auto">
+        <div class="table-container overflow-x-auto overflow-y-hidden min-h-[420px]">
           <table class="w-full text-left border-collapse min-w-[550px]" id="attendees-table">
             <thead class="sticky top-0 z-20 bg-slate-100 shadow-xs">
               <tr class="bg-slate-100 text-slate-700 uppercase text-[10px] sm:text-xs font-extrabold tracking-wider border-b border-slate-200">
-                <th class="py-1.5 sm:py-2 px-0.5 text-center w-6 sticky left-0 z-30 bg-slate-100">#</th>
-                <th class="py-1.5 sm:py-2 px-1 sticky left-6 z-30 bg-slate-100 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] max-w-[83px] sm:max-w-[102px]">Name</th>
-                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap">HC</th>
-                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap">Food</th>
-                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-left whitespace-nowrap">Assigned Room</th>
-                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap">Gift Bag</th>
-                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap">Photo</th>
+                <th class="py-1.5 sm:py-2 px-0.5 text-center w-6 sticky top-0 left-0 z-30 bg-slate-100">#</th>
+                <th class="py-1.5 sm:py-2 px-1 sticky top-0 left-6 z-30 bg-slate-100 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] max-w-[83px] sm:max-w-[102px]">Name</th>
+                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap sticky top-0 z-20 bg-slate-100">HC</th>
+                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap sticky top-0 z-20 bg-slate-100">Food</th>
+                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-left whitespace-nowrap sticky top-0 z-20 bg-slate-100">Assigned Room</th>
+                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap sticky top-0 z-20 bg-slate-100">Gift Bag</th>
+                <th class="py-1.5 sm:py-2 px-1.5 sm:px-2 text-center whitespace-nowrap sticky top-0 z-20 bg-slate-100">Photo</th>
               </tr>
             </thead>
             <tbody id="attendee-tbody" class="divide-y divide-slate-100 text-xs sm:text-sm font-medium">
@@ -1009,6 +1008,10 @@
           }
         }
       });
+
+      if (typeof window.syncTableScrollMode === 'function') {
+        setTimeout(window.syncTableScrollMode, 50);
+      }
     };
 
     window.updateConnectionStatus = function(isConnected) {
@@ -1019,7 +1022,7 @@
       if (isConnected) {
         dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]";
         text.innerText = "Connected";
-        text.className = "text-emerald-300 text-[11px] sm:text-xs font-semibold";
+        text.className = "text-slate-300 text-[11px] sm:text-xs font-semibold";
       } else {
         dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse";
         text.innerText = "Connecting...";
@@ -1042,6 +1045,9 @@
       renderRoomGrid();
       populateRoomDropdown();
       updateAdminVisibility();
+      if (typeof window.syncTableScrollMode === 'function') {
+        window.syncTableScrollMode();
+      }
     };
 
     function ensureOrderIndexes() {
@@ -1487,6 +1493,83 @@
       setupRowDragAndDrop();
     }
 
+    window.syncTableScrollMode = function() {
+      const container = document.querySelector('.table-container');
+      const header = document.querySelector('header');
+      if (!container) return;
+
+      const headerHeight = header ? header.offsetHeight : 44;
+      const rect = container.getBoundingClientRect();
+
+      // Check if page has scrolled down so table top meets or goes under the sticky top header
+      if (rect.top <= headerHeight + 2) {
+        if (container.style.overflowY !== 'auto') {
+          container.style.overflowY = 'auto';
+        }
+        const remainingHeight = window.innerHeight - headerHeight - 12;
+        container.style.maxHeight = `${remainingHeight}px`;
+      } else {
+        // When above top sticky threshold, keep inner overflow hidden so touch/scroll gestures move the main page
+        if (container.scrollTop <= 0) {
+          if (container.style.overflowY !== 'hidden') {
+            container.style.overflowY = 'hidden';
+          }
+          container.style.maxHeight = 'none';
+        }
+      }
+    };
+
+    function setupTableScrollSync() {
+      const container = document.querySelector('.table-container');
+      if (!container) return;
+
+      let touchStartY = 0;
+
+      window.addEventListener('scroll', window.syncTableScrollMode, { passive: true });
+      window.addEventListener('resize', window.syncTableScrollMode, { passive: true });
+
+      container.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          touchStartY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      container.addEventListener('touchmove', (e) => {
+        if (!e.touches || !e.touches[0]) return;
+        const currentY = e.touches[0].clientY;
+        const deltaY = currentY - touchStartY; // positive = dragging down (scrolling page up)
+        const headerHeight = document.querySelector('header')?.offsetHeight || 44;
+        const rect = container.getBoundingClientRect();
+
+        // Pulling down at top of table list -> switch to page scroll up
+        if (container.scrollTop <= 0 && deltaY > 0) {
+          container.style.overflowY = 'hidden';
+          container.style.maxHeight = 'none';
+        } else if (rect.top <= headerHeight + 2) {
+          container.style.overflowY = 'auto';
+          container.style.maxHeight = `${window.innerHeight - headerHeight - 12}px`;
+        }
+      }, { passive: true });
+
+      container.addEventListener('wheel', (e) => {
+        const headerHeight = document.querySelector('header')?.offsetHeight || 44;
+        const rect = container.getBoundingClientRect();
+
+        if (container.scrollTop <= 0 && e.deltaY < 0) {
+          // Scrolling up at top of table -> let page scroll up
+          container.style.overflowY = 'hidden';
+          container.style.maxHeight = 'none';
+        } else if (rect.top <= headerHeight + 2) {
+          container.style.overflowY = 'auto';
+          container.style.maxHeight = `${window.innerHeight - headerHeight - 12}px`;
+        } else if (e.deltaY > 0) {
+          // Scrolling down when table is not at top -> keep overflow hidden so page scrolls down
+          container.style.overflowY = 'hidden';
+          container.style.maxHeight = 'none';
+        }
+      }, { passive: true });
+    }
+
     let dragSourceId = null;
     let pressTimer = null;
     let isDraggingRow = false;
@@ -1590,7 +1673,7 @@
           pressTimer = null;
         }
 
-        if (container) container.style.overflowY = 'auto';
+        if (container) container.style.overflowY = '';
         document.body.style.touchAction = '';
         document.body.style.overflow = '';
 
@@ -1617,6 +1700,10 @@
         dragSourceId = null;
         isDraggingRow = false;
         currentHoveredRowId = null;
+        
+        if (typeof window.syncTableScrollMode === 'function') {
+          window.syncTableScrollMode();
+        }
       };
 
       tbody.addEventListener('mousedown', handlePointerDown);
@@ -2137,14 +2224,14 @@
           window.userRole = 'admin';
           window.isAdminMode = true;
           window.isSuperAdmin = false;
-          inputEl.blur(); // Dismisses mobile keyboard automatically
+          inputEl.blur();
           closeAdminModal();
           updateAdminVisibility();
         } else if (val === '6789') {
           window.userRole = 'superadmin';
           window.isAdminMode = true;
           window.isSuperAdmin = true;
-          inputEl.blur(); // Dismisses mobile keyboard automatically
+          inputEl.blur();
           closeAdminModal();
           updateAdminVisibility();
         } else {
@@ -2326,6 +2413,7 @@
 
     window.onload = function() {
       startCountdown();
+      setupTableScrollSync();
       renderAllViews();
     };
   </script>
